@@ -6,8 +6,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { getMovies, GetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
 
-const Container = styled.div`
-`;
+const Container = styled.div``;
 
 const CategoryTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
@@ -174,7 +173,12 @@ const Slider = ({
             transition={{ type: "tween", duration: 1 }}
           >
             {data?.results
-              .slice(index * offset, index * offset + offset)
+              .slice(
+                index === 0 ? index * offset : index * offset - 1,
+                index === Math.ceil(data?.results.length / offset) - 1
+                  ? index * offset + offset
+                  : index * offset + offset + 1
+              )
               .map((movie) => (
                 <Box
                   onClick={() => onBoxClick(movie.id)}
