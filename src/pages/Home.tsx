@@ -1,8 +1,5 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
 import {
   getDramaMovies,
   getFantasyMovies,
@@ -13,7 +10,6 @@ import {
   getTodaysMovies,
   getTopRated,
 } from "../api";
-import { makeImagePath } from "../utils";
 import Slider from "../components/Slider";
 
 const Container = styled.div`
@@ -33,12 +29,7 @@ const Loader = styled.div`
   color: ${(props) => props.theme.red};
 `;
 
-const offset = 5;
-
 const Home = () => {
-  const history = useNavigate();
-  const movieMatch: PathMatch<string> | null = useMatch("/movies/:movieId");
-
   const { data: nowPlayingData, isLoading: nowPlayingLoaing } =
     useQuery<GetMoviesResult>({
       queryKey: ["nowPlaying"],
@@ -80,27 +71,6 @@ const Home = () => {
       queryKey: ["fantasy"],
       queryFn: getFantasyMovies,
     });
-
-  const [index, setIndex] = useState(0);
-  const [leaving, setLeaving] = useState(false);
-
-  const { scrollY } = useScroll();
-
-  const increaseIndex = () => {
-    if (nowPlayingData) {
-      if (leaving) return;
-      setLeaving(true);
-      const totalMovies = nowPlayingData?.results.length - 2;
-      const maxIndex = Math.ceil(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-
-  const clickedMovie =
-    movieMatch?.params.movieId &&
-    nowPlayingData?.results.find(
-      (movie) => movie.id === +movieMatch.params.movieId!
-    );
 
   return (
     <Container>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
@@ -6,8 +6,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { getMovies, GetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
 
-const Container = styled.div`
-`;
+const Container = styled.div``;
 
 const CategoryTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
@@ -27,10 +26,10 @@ const Row = styled(motion.div)`
   padding-left: 40px;
 `;
 
-const Box = styled(motion.div)<{ bgPhoto: string | undefined }>`
+const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
   width: auto;
   height: 180px;
-  background: url(${(props) => props.bgPhoto}) center/cover no-repeat;
+  background: url(${(props) => props.$bgPhoto}) center/cover no-repeat;
   font-size: 22px;
   cursor: pointer;
   &:first-child {
@@ -55,16 +54,17 @@ const Info = styled(motion.div)`
 `;
 
 const ModalBox = styled(motion.div)`
+  width: 768px;
+  height: 500px;
   position: fixed;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 40vw;
-  height: 68vh;
+  top: calc(100vh / 2 - 500px / 2);
+  left: calc(100vw / 2 - 768px / 2);
   background: ${(props) => props.theme.black.lighter};
   color: ${(props) => props.theme.white.darker};
   border-radius: 8px;
   overflow: hidden;
+  z-index: 1;
+  border: 1px solid #f00;
 `;
 
 const Overlay = styled(motion.div)`
@@ -73,13 +73,13 @@ const Overlay = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.2);
   cursor: pointer;
 `;
 
 const MovieCover = styled.div`
   width: 100%;
-  height: 400px;
+  height: 500px;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -117,7 +117,7 @@ const boxVariants = {
   normal: { scale: 1 },
   hover: {
     scale: 1.2,
-    y: -50,
+    y: -20,
     transition: { delay: 0.5, duration: 0.3, type: "tween" },
   },
 };
@@ -144,7 +144,7 @@ const Slider = ({
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
 
-  const { scrollY } = useScroll();
+  //const { scrollY } = useScroll();
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
 
@@ -179,9 +179,9 @@ const Slider = ({
                 <Box
                   onClick={() => onBoxClick(movie.id)}
                   key={movie.id}
-                  layoutId={movie.id + ""}
+                  layoutId={String(movie.id)}
                   variants={boxVariants}
-                  bgPhoto={makeImagePath(movie.backdrop_path || "")}
+                  $bgPhoto={makeImagePath(movie.backdrop_path || "", "w500")}
                   initial="normal"
                   whileHover="hover"
                 >
@@ -201,25 +201,20 @@ const Slider = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-            <ModalBox
-              layoutId={movieMatch.params.movieId}
-              style={{ top: scrollY.get() + 60 }}
-            >
-              {clickedMovie && (
-                <>
-                  <MovieCover
-                    style={{
-                      backgroundImage: `linear-gradient(to top, #000, transparent), url(${makeImagePath(
-                        clickedMovie.backdrop_path,
-                        "w500"
-                      )})`,
-                    }}
-                  />
-                  <MovieTitle>{clickedMovie.title}</MovieTitle>
-                  <MovieOverView>{clickedMovie.overview}</MovieOverView>
-                </>
-              )}
-            </ModalBox>
+
+            {clickedMovie && (
+              <ModalBox layoutId={`${movieMatch.params.movieId}`}>
+                <MovieCover
+                  style={{
+                    backgroundImage: `linear-gradient(to top, #000, transparent), url(${makeImagePath(
+                      clickedMovie.backdrop_path
+                    )})`,
+                  }}
+                />
+                <MovieTitle>{clickedMovie.title}</MovieTitle>
+                <MovieOverView>{clickedMovie.overview}</MovieOverView>
+              </ModalBox>
+            )}
           </>
         ) : null}
       </AnimatePresence>
@@ -227,4 +222,4 @@ const Slider = ({
   );
 };
 
-export default Slider;
+export default React.memo(Slider);
