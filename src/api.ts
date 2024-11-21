@@ -99,8 +99,15 @@ export const getReviews = (movieId: number) => {
     (response) => response.json()
   );
 };
+
 export const getVideos = (movieId: number) => {
   return fetch(`${BASE_PATH}/movie/${movieId}/videos?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
+};
+
+export const getDetailInfo = (movieId: number) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko-KR`
+  ).then((response) => response.json());
 };
