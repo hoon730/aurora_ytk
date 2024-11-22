@@ -29,12 +29,20 @@ const Logo = styled.img`
 `;
 
 const LonginBox = styled.div`
+  /* border: 1px solid red; */
   width: 580px;
   height: 593px;
   background: ${(props) => props.theme.white.lighter};
   border-radius: 20px;
   padding: 60px 72px;
 `;
+
+const LogoBox = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+const DarkLogo = styled.img``;
 
 const GuideBox = styled.div`
   /* border: 1px solid red; */
@@ -52,6 +60,39 @@ const GuideText = styled.p`
   font: bold 16px "pretendard";
   /* border: 1px solid red; */
   margin-bottom: 30px;
+`;
+
+const Form = styled.form``;
+
+const InputBox = styled.div`
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 50px;
+`;
+
+const LoginInput = styled.input`
+  width: 100%;
+  height: 60px;
+  border: none;
+  border-radius: 10px;
+  background: ${(props) => props.theme.white.darker};
+  padding-left: 20px;
+  &:focus {
+    outline: none;
+  }
+`;
+
+const Button = styled.button`
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 50px;
+  font: bold 18px "pretendard";
+  background: ${(props) => props.theme.aqua.aqua2};
+  color: ${(props) => props.theme.white.lighter};
+  cursor: pointer;
 `;
 
 const CopyrightBox = styled.div`
@@ -79,6 +120,9 @@ const Login = () => {
       <Wrapper>
         <Logo src="/img/logo.png" width="1024" height="276.742" />
         <LonginBox>
+          <LogoBox>
+            <DarkLogo src="/img/darklogo.png" width="119" height="38" />
+          </LogoBox>
           <GuideBox>
             <GuideTitle>이메일을 입력하세요</GuideTitle>
             <GuideText>
@@ -87,6 +131,24 @@ const Login = () => {
               이메일을 입력해주세요.
             </GuideText>
           </GuideBox>
+          {/* <InputBox>
+            <LoginInput
+              onChange={onChange}
+              type="text"
+              name="id"
+              value={id}
+              placeholder=" "
+              ref={userIdRef}
+              required
+            />
+            <Label>사용자 이름</Label>
+          </InputBox> */}
+          <Form>
+            <InputBox>
+              <LoginInput type="text" />
+              <Button type="submit">다음</Button>
+            </InputBox>
+          </Form>
           <CopyrightBox>
             <CopyrightTitle>
               오로라+는 The Wait Disney Family of Companies의 계열사입니다.
