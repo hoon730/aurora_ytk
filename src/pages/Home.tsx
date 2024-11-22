@@ -79,43 +79,82 @@ const Home = () => {
       ) : (
         <>
           {nowPlayingData && (
-            <Slider data={nowPlayingData} categoryTitle="오로라 최신작" />
+            <Slider
+              category={"np"}
+              data={nowPlayingData}
+              categoryTitle="오로라 최신작"
+            />
           )}
-          {todaysMoviesLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            todaysMoviesData && (
-              <Slider data={todaysMoviesData} categoryTitle="오늘의 추천작" />
-            )
+        </>
+      )}
+      {todaysMoviesLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {todaysMoviesData && (
+            <Slider
+              category={"tm"}
+              data={todaysMoviesData}
+              categoryTitle="오늘의 추천작"
+            />
           )}
-          {topRatedLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            topRatedData && (
-              <Slider data={topRatedData} categoryTitle="시청자들의 Pick" />
-            )
+        </>
+      )}
+
+      {topRatedLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {topRatedData && (
+            <Slider
+              category={"tr"}
+              data={topRatedData}
+              categoryTitle="시청자들의 Pick"
+            />
           )}
-          {popularLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            popularData && <Slider data={popularData} categoryTitle="인기작" />
+        </>
+      )}
+
+      {popularLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {popularData && (
+            <Slider category={"pd"} data={popularData} categoryTitle="인기작" />
           )}
-          {thrillerLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            thrillerData && (
-              <Slider data={thrillerData} categoryTitle="스릴러" />
-            )
+        </>
+      )}
+
+      {thrillerLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {thrillerData && (
+            <Slider
+              category={"td"}
+              data={thrillerData}
+              categoryTitle="스릴러"
+            />
           )}
-          {dramaLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            dramaData && <Slider data={dramaData} categoryTitle="드라마" />
+        </>
+      )}
+
+      {dramaLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {dramaData && (
+            <Slider category={"dd"} data={dramaData} categoryTitle="드라마" />
           )}
-          {fantasyLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            fantasyData && <Slider data={fantasyData} categoryTitle="판타지" />
+        </>
+      )}
+
+      {fantasyLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {fantasyData && (
+            <Slider category={"fd"} data={fantasyData} categoryTitle="판타지" />
           )}
         </>
       )}
