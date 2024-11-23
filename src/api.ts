@@ -7,6 +7,7 @@ export interface Movie {
   genre_ids: number[];
   poster_path: string;
   title: string;
+  original_language: string;
   original_title: string;
   overview: string;
   vote_average: number;
@@ -70,12 +71,33 @@ export const getFantasyMovies = () => {
 
 export const searchContents = (keyword: string | null) => {
   return fetch(
-    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}`
+    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}&include_adult=false&language=ko-KR`
   ).then((response) => response.json());
 };
 
-export const searchGeneres = () => {
-  return fetch(`${BASE_PATH}/genre/movie/list?api_key=${API_KEY}`).then(
+export const getAllGeneres = () => {
+  return fetch(
+    `${BASE_PATH}/genre/movie/list?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
+};
+
+// runtime 찾아오는 데이터
+export const getSearchDetail = (movieId: number) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
+};
+
+// 연령등급 찾아오는 데이터
+export const getSearchReleaseDates = (movieId: number) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}/release_dates?api_key=${API_KEY}`
+  ).then((response) => response.json());
+};
+
+// 로고 찾아오는 데이터
+export const getImage = (movieId: number) => {
+  return fetch(`${BASE_PATH}/movie/${movieId}/images?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
 };
