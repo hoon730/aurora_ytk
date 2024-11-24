@@ -3,8 +3,8 @@ import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import { GetMoviesResult, searchContents } from "../api";
-import { makeImagePath } from "../utils";
 import SearchItem from "../components/SearchItem";
+import { formatDate } from "../utils";
 
 const Container = styled.main`
   width: 100%;
@@ -21,7 +21,7 @@ const Container = styled.main`
 const Inner = styled.div`
   width: 100%;
   height: 100%;
-  padding-top: 160px;
+  padding: 100px 0;
   display: flex;
   flex-direction: column;
 `;
@@ -59,8 +59,9 @@ const Option = styled.div`
 `;
 
 const MovieItemArea = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 30px;
 `;
 
@@ -81,7 +82,9 @@ const Search = () => {
             (item.original_language === "en" ||
               item.original_language === "ko") &&
             item.release_date >= "2000-01-01" &&
-            (item.backdrop_path || item.poster_path)
+            item.release_date <= formatDate(new Date()) &&
+            (item.backdrop_path || item.poster_path) &&
+            item.vote_count > 0
         )
       : [];
 
@@ -112,6 +115,7 @@ const Search = () => {
                   key={data.id}
                   movieId={data.id}
                   title={data.title}
+                  genres={data.genre_ids}
                   image={
                     data.backdrop_path ? data.backdrop_path : data.poster_path
                   }

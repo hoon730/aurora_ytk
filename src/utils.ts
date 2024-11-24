@@ -7,6 +7,16 @@ export const runtimeCalc = (time: number) => {
   const minute = Math.round(time % 60);
   const runtime =
     (hour > 0 ? `${hour}시간 ` : "") +
-    (minute > 0 ? `${minute > 9 ? minute : `0${minute}`}분` : "");
+    (minute > 0
+      ? `${minute > 9 ? minute : hour <= 0 ? minute : `0${minute}`}분`
+      : "");
   return runtime;
+};
+
+export const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 };
