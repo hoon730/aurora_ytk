@@ -5,25 +5,64 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
 import Detail from "../pages/Detail";
+import { BsChevronCompactLeft } from "react-icons/bs";
+import { BsChevronCompactRight } from "react-icons/bs";
 
-const Container = styled.div``;
+import { Swiper, SwiperSlide } from "swiper/react"; // Swiper 컴포넌트
+import { Navigation, Pagination } from "swiper/modules";
+// Swiper 모듈
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { transform } from "typescript";
+
+const Container = styled.div`
+  margin-bottom: 50px;
+  padding-left: 40px;
+  transition: all 0.3s linear;
+
+  .button {
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 100%;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      color: #000;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    &.custom-prev {
+      left: 0;
+      opacity: 0;
+      &.active {
+        opacity: 1;
+      }
+    }
+    &.custom-next {
+      right: 0;
+    }
+  }
+
+  &.active {
+    padding-left: 0%;
+  }
+`;
 
 const CategoryTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
-`;
-
-const SliderContainer = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
-const Row = styled(motion.div)`
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-bottom: 10px;
-  padding-left: 40px;
+  margin-bottom: 15px;
 `;
 
 const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
@@ -53,18 +92,6 @@ const Info = styled(motion.div)`
   }
 `;
 
-const rowVariants = {
-  hidden: {
-    x: window.innerWidth + 10,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.innerWidth - 10,
-  },
-};
-
 const boxVariants = {
   normal: { scale: 1 },
   hover: {
@@ -81,8 +108,6 @@ const infoVariants = {
   },
 };
 
-const offset = 5;
-
 const Slider = ({
   category,
   data,
@@ -95,9 +120,9 @@ const Slider = ({
   const history = useNavigate();
   const movieMatch: PathMatch<string> | null = useMatch("/movies/:movieId");
 
-  const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
   const [movieId, setMovieId] = useState("");
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -114,39 +139,53 @@ const Slider = ({
     }
   };
 
+  const handleOnClick = () => {
+    setIsClicked(true);
+  };
+
   return (
-    <Container>
+    <Container className={isClicked ? "active" : ""}>
       <CategoryTitle>{categoryTitle}</CategoryTitle>
-      <SliderContainer>
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-          <Row
-            variants={rowVariants}
-            key={index}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={{ type: "tween", duration: 1 }}
-          >
-            {data?.results
-              .slice(index * offset, index * offset + offset)
-              .map((movie) => (
-                <Box
-                  onClick={() => onBoxClick(movie.id)}
-                  key={movie.id}
-                  layoutId={`${category}_${movie.id}`}
-                  variants={boxVariants}
-                  $bgPhoto={makeImagePath(movie.backdrop_path || "", "w500")}
-                  initial="normal"
-                  whileHover="hover"
-                >
-                  <Info variants={infoVariants}>
-                    <h4>{movie.title}</h4>
-                  </Info>
-                </Box>
-              ))}
-          </Row>
-        </AnimatePresence>
-      </SliderContainer>
+      <Swiper
+        modules={[Navigation, Pagination]}
+        navigation={{
+          prevEl: ".custom-prev",
+          nextEl: ".custom-next",
+        }}
+        spaceBetween={10}
+        slidesPerView={5}
+        pagination={{ clickable: true }}
+        loop={true}
+      >
+        {data?.results.map((movie) => (
+          <SwiperSlide key={movie.id}>
+            <Box
+              onClick={() => onBoxClick(movie.id)}
+              key={movie.id}
+              layoutId={`${category}_${movie.id}`}
+              variants={boxVariants}
+              $bgPhoto={makeImagePath(movie.backdrop_path || "", "w500")}
+              initial="normal"
+              whileHover="hover"
+            >
+              <Info variants={infoVariants}>
+                <h4>{movie.title}</h4>
+              </Info>
+            </Box>
+          </SwiperSlide>
+        ))}
+        <div
+          className={
+            isClicked ? "active custom-prev button" : "custom-prev button"
+          }
+        >
+          <BsChevronCompactLeft />
+        </div>
+        <div className="custom-next button" onClick={handleOnClick}>
+          <BsChevronCompactRight />
+        </div>
+      </Swiper>
+
       <AnimatePresence>
         {isOpen ? (
           <Detail

@@ -72,6 +72,8 @@ const Home = () => {
       queryFn: getFantasyMovies,
     });
 
+  console.log(fantasyData);
+
   return (
     <Container>
       {nowPlayingLoaing ? (

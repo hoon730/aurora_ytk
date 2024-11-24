@@ -10,7 +10,7 @@ const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 80px;
+  padding: 0 40px;
   color: ${(props) => props.theme.white.lighter};
   font-size: 16px;
   position: fixed;
