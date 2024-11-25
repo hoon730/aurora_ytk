@@ -38,16 +38,19 @@ const BackgroundImage = styled.img`
 `;
 
 const LogoArea = styled.div`
+  width: calc(100% - 50px);
   height: 30px;
   position: absolute;
   left: 25px;
   bottom: 25px;
+  overflow: hidden;
 `;
 
 const LogoImage = styled.img`
-  max-width: calc(100% - 25px);
+  max-width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: bottom;
 `;
 
 const InfoArea = styled.div`
