@@ -16,6 +16,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
+  overflow: hidden;
+  @media screen and (max-width: 1560px) {
+    padding-bottom: 10px;
+  }
+  @media screen and (max-width: 685px) {
+    padding-bottom: 0px;
+  }
 `;
 
 const ImageArea = styled.div<{ logo: string }>`
@@ -29,6 +36,12 @@ const ImageArea = styled.div<{ logo: string }>`
     logo !== undefined
       ? "&::before { content: ''; width: 100%; height: 100%; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);}"
       : null}
+  @media screen and (max-width: 685px) {
+    ${({ logo }) =>
+      logo !== undefined
+        ? ""
+        : "&::before { content: ''; width: 100%; height: 100%; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);}"}
+  }
 `;
 
 const BackgroundImage = styled.img`
@@ -43,7 +56,12 @@ const LogoArea = styled.div`
   position: absolute;
   left: 25px;
   bottom: 25px;
-  overflow: hidden;
+  @media screen and (max-width: 685px) {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const LogoImage = styled.img`
@@ -58,6 +76,9 @@ const InfoArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  @media screen and (max-width: 685px) {
+    display: none;
+  }
 `;
 
 const Title = styled.div`
@@ -69,7 +90,21 @@ const Title = styled.div`
   overflow: hidden;
 `;
 
+const LogoTitle = styled.div`
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: none;
+  @media screen and (max-width: 685px) {
+    display: block;
+  }
+`;
+
 const DescriptionArea = styled.div`
+  max-width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -109,6 +144,7 @@ const Certification = styled.div`
 `;
 
 const TextArea = styled.div`
+  width: fit-content;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -116,8 +152,10 @@ const TextArea = styled.div`
 
 const Text = styled.div`
   font-size: 16px;
-  white-space: nowrap;
   color: #9a9a9a;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 interface SearchItemProps {
@@ -160,13 +198,13 @@ const SearchItem = ({
     queryFn: getAllGeneres,
   });
 
-  const { data: detailData, isLoading: detailLoading } = useQuery<Detail>({
+  const { data: detailData } = useQuery<Detail>({
     queryKey: ["getDetail", movieId],
     queryFn: () => getSearchDetail(movieId),
     enabled: !!movieId,
   });
 
-  const { data: dateData, isLoading: dateLoading } = useQuery<ReleaseDate>({
+  const { data: dateData } = useQuery<ReleaseDate>({
     queryKey: ["getDate", movieId],
     queryFn: () => getSearchReleaseDates(movieId),
     enabled: !!movieId,
@@ -218,7 +256,9 @@ const SearchItem = ({
               src={makeImagePath(searchInfo[1], "w300")}
               alt={title + " logo"}
             />
-          ) : null}
+          ) : (
+            <LogoTitle>{title}</LogoTitle>
+          )}
         </LogoArea>
       </ImageArea>
       <InfoArea>
