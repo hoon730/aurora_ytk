@@ -26,6 +26,23 @@ export interface GetMoviesResult {
   total_results: number;
 }
 
+export interface MovieImage {
+  aspect_ratio: number;
+  file_path: string;
+  height: number;
+  iso_639_1: string;
+  vote_average: number;
+  vote_count: number;
+  width: number;
+}
+
+export interface MovieImages {
+  id: number;
+  backdrops: MovieImage[];
+  logos: MovieImage[];
+  posters: MovieImage[];
+}
+
 export const getMovies = () => {
   return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`)
     .then((response) => response.json())
@@ -106,8 +123,14 @@ export const getVideos = (movieId: number) => {
   );
 };
 
-export const getDetailInfo = (movieId: number) => {
+export const getMovieDetailInfo = (movieId: number | undefined) => {
   return fetch(
     `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko-KR`
   ).then((response) => response.json());
+};
+
+export const getMovieImages = (movieId: number) => {
+  return fetch(`${BASE_PATH}/movie/${movieId}/images?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
 };

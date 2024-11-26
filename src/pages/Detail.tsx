@@ -1,102 +1,66 @@
+import { useQuery } from "@tanstack/react-query";
+import { PathMatch, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { motion } from "framer-motion";
-import { makeImagePath } from "../utils";
-import { useNavigate } from "react-router-dom";
-import { GetMoviesResult } from "../api";
+import { getMovieDetailInfo, GetMoviesResult, getVideos } from "../api";
+import YouTube from "react-youtube";
 
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
+const Container = styled.main`
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  cursor: pointer;
+  margin-top: 60px;
 `;
 
-const ModalBox = styled(motion.div)`
-  width: 768px;
-  height: 500px;
-  position: fixed;
-  top: calc(100vh / 2 - 500px / 2);
-  left: calc(100vw / 2 - 768px / 2);
-  background: ${(props) => props.theme.black.lighter};
-  color: ${(props) => props.theme.white.darker};
-  border-radius: 8px;
-  overflow: hidden;
-  z-index: 1;
-  border: 1px solid #f00;
-`;
+const Detail = () => {
+  const navigate = useNavigate();
+  const movieMatch: PathMatch<string> | null = useMatch("/detail/:movieId");
 
-const MovieCover = styled.div`
-  width: 100%;
-  height: 500px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-`;
+  // movieMatch가 없을 때 기본 동작 처리
+  const movieId = movieMatch ? Number(movieMatch.params.movieId) : null;
 
-const MovieTitle = styled.h3`
-  color: ${(props) => props.theme.white.darker};
-  font-size: 28px;
-  padding: 20px;
-  position: relative;
-  top: -80px;
-`;
+  // 영화 상세 정보 쿼리
+  const { data: movieData, isLoading: movieLoading } =
+    useQuery<GetMoviesResult>({
+      queryKey: ["movieDetailData", movieId],
+      queryFn: () => getMovieDetailInfo(movieId!),
+      enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
+    });
 
-const MovieOverView = styled.p`
-  padding: 0 20px;
-  line-height: 2;
-  font-size: 20px;
-  position: relative;
-  top: -60px;
-`;
+  // 비디오 정보 쿼리
+  const { data: videoData, isLoading: videoLoading } = useQuery({
+    queryKey: ["getVideos", movieId],
+    queryFn: () => getVideos(movieId!),
+    enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
+  });
 
-const Detail = ({
-  data,
-  movieMatchId,
-  isOpen,
-  setIsOpen,
-}: {
-  data: GetMoviesResult;
-  movieMatchId: string | undefined;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  //const history = useNavigate();
-  const [category, movieId] = (movieMatchId ?? "").split("_");
+  const videoIds = videoData?.results.map((video: any) => video.key);
 
-  const onOverlayClick = () => {
-    setIsOpen(false);
-    //history(`/`);
-  };
-
-  const clickedMovie =
-    movieId && data?.results.find((movie) => movie.id === +movieId!);
+  // movieMatch가 없는 경우 리다이렉트 처리
+  if (!movieMatch) {
+    navigate("/", { replace: true });
+    return null;
+  }
 
   return (
-    <>
-      <Overlay
-        onClick={onOverlayClick}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isOpen ? 1 : 0 }}
-        exit={{ opacity: 0 }}
-      />
-
-      {clickedMovie && (
-        <ModalBox layoutId={`${category}_${movieId}`}>
-          <MovieCover
-            style={{
-              backgroundImage: `linear-gradient(to top, #000, transparent), url(${makeImagePath(
-                clickedMovie.backdrop_path
-              )})`,
+    <Container>
+      <div>
+        {videoIds?.length > 0 ? (
+          <YouTube
+            videoId={videoIds[0]}
+            opts={{
+              width: "100%",
+              height: "800px",
+              playerVars: {
+                autoplay: 0,
+                modestbranding: 1,
+                loop: 0,
+                playlist: videoIds[0],
+              },
             }}
           />
-          <MovieTitle>{clickedMovie.title}</MovieTitle>
-          <MovieOverView>{clickedMovie.overview}</MovieOverView>
-        </ModalBox>
-      )}
-    </>
+        ) : (
+          "No Available"
+        )}
+      </div>
+    </Container>
   );
 };
 
