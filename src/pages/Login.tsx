@@ -69,7 +69,8 @@ const InputBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin-bottom: 50px;
+  margin-bottom: 25px;
+  position: relative;
 `;
 
 const LoginInput = styled.input`
@@ -78,10 +79,29 @@ const LoginInput = styled.input`
   border: none;
   border-radius: 10px;
   background: ${(props) => props.theme.white.darker};
+  font-size: 18px;
   padding-left: 20px;
+  outline: none;
   &:focus {
     outline: none;
+    border-bottom: 3px solid ${(props) => props.theme.aqua.aqua1};
   }
+  &:focus + label {
+    font-size: 12px;
+    opacity: 1;
+    top: -2%;
+  }
+`;
+
+const Label = styled.label`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding-left: 20px;
+  font-size: 16px;
+  color: #4a4949;
+  pointer-events: none;
+  transition: all 0.2s ease-in-out;
 `;
 
 const Button = styled.button`
@@ -93,6 +113,7 @@ const Button = styled.button`
   background: ${(props) => props.theme.aqua.aqua2};
   color: ${(props) => props.theme.white.lighter};
   cursor: pointer;
+  margin-bottom: 50px;
 `;
 
 const CopyrightBox = styled.div`
@@ -115,6 +136,8 @@ const CopyrightText = styled.p`
 `;
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+
   return (
     <Container>
       <Wrapper>
@@ -131,31 +154,30 @@ const Login = () => {
               이메일을 입력해주세요.
             </GuideText>
           </GuideBox>
-          {/* <InputBox>
-            <LoginInput
-              onChange={onChange}
-              type="text"
-              name="id"
-              value={id}
-              placeholder=" "
-              ref={userIdRef}
-              required
-            />
-            <Label>사용자 이름</Label>
-          </InputBox> */}
           <Form>
             <InputBox>
-              <LoginInput type="text" />
-              <Button type="submit">다음</Button>
+              <LoginInput
+                type="text"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder=" " // 비워 둬야 label이 작동합니다.
+                required
+              />
+              <Label htmlFor="email">이메일</Label>
             </InputBox>
+            {/* 언니 이 과자 맛있다 나도 다음에 사먹어야겠어 알려줘서 고마워 */}
+            {/* 이거 안지우고 깃 올리면 웃기겠다 풉키풉키 */}
+            {/* 괴도예지 왔다감ㅎㅎ */}
+            <Button type="submit">다음</Button>
           </Form>
           <CopyrightBox>
             <CopyrightTitle>
-              오로라+는 The Wait Disney Family of Companies의 계열사입니다.
+              오로라+는 The Wait Aurora Family of Companies의 계열사입니다.
             </CopyrightTitle>
             <CopyrightText>
-              MyAurora 계정으로 Aurora+, ESPN, Wait Disney World, 기타 다른
-              서비스 등 The Walt Disney Family of Companies의 다양한 서비스에
+              MyAurora 계정으로 Aurora+, ESPN, Walt Aurora World, 기타 다른
+              서비스 등 The Walt Aurora Family of Companies의 다양한 서비스에
               간편하게 로그인해 보세요.
             </CopyrightText>
           </CopyrightBox>
