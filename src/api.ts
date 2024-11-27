@@ -123,14 +123,23 @@ export const getVideos = (movieId: number) => {
   );
 };
 
-export const getMovieDetailInfo = (movieId: number | undefined) => {
-  return fetch(
-    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko-KR`
+export const getMovieDetailInfo = async (movieId: number | undefined) => {
+  const englishData = await fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`
   ).then((response) => response.json());
+
+  const koreanData = await fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
+
+  return {
+    englishData,
+    koreanData,
+  };
 };
 
-export const getMovieImages = (movieId: number) => {
-  return fetch(`${BASE_PATH}/movie/${movieId}/images?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
+export const getMovieImages = (movieId: number | undefined) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}/images?include_image_language=ko%2Cen&api_key=${API_KEY}`
+  ).then((response) => response.json());
 };
