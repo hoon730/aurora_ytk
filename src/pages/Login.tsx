@@ -80,6 +80,7 @@ const LoginInput = styled.input`
   border-radius: 10px;
   background: ${(props) => props.theme.white.darker};
   font-size: 18px;
+  padding-top: 15px;
   padding-left: 20px;
   outline: none;
   &:focus {
@@ -87,21 +88,19 @@ const LoginInput = styled.input`
     border-bottom: 3px solid ${(props) => props.theme.aqua.aqua1};
   }
   &:focus + label {
-    font-size: 12px;
     opacity: 1;
-    top: -2%;
   }
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $isEmpty: string }>`
   position: absolute;
-  top: 50%;
   transform: translateY(-50%);
   padding-left: 20px;
-  font-size: 16px;
-  color: #4a4949;
+  font-size: ${({ $isEmpty }) => ($isEmpty === "" ? "16px" : "12px")};
+  color: ${(props) => props.theme.aqua.aqua1};
   pointer-events: none;
   transition: all 0.2s ease-in-out;
+  top: ${({ $isEmpty }) => ($isEmpty === "" ? "50%" : "23%")};
 `;
 
 const Button = styled.button`
@@ -114,6 +113,10 @@ const Button = styled.button`
   color: ${(props) => props.theme.white.lighter};
   cursor: pointer;
   margin-bottom: 50px;
+
+  &:hover {
+    background: ${(props) => props.theme.aqua.aqua4};
+  }
 `;
 
 const CopyrightBox = styled.div`
@@ -137,6 +140,15 @@ const CopyrightText = styled.p`
 
 const Login = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [next, setNext] = useState(false);
+
+  const onEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      setNext(true);
+    }
+  };
 
   return (
     <Container>
@@ -154,22 +166,40 @@ const Login = () => {
               이메일을 입력해주세요.
             </GuideText>
           </GuideBox>
-          <Form>
-            <InputBox>
-              <LoginInput
-                type="text"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder=" " // 비워 둬야 label이 작동합니다.
-                required
-              />
-              <Label htmlFor="email">이메일</Label>
-            </InputBox>
+          <Form onSubmit={onEmailSubmit}>
+            {next ? (
+              <InputBox>
+                <LoginInput
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder=" " // 비워 둬야 label이 작동합니다.
+                  required
+                />
+                <Label htmlFor="password" $isEmpty={password}>
+                  비밀번호
+                </Label>
+              </InputBox>
+            ) : (
+              <InputBox>
+                <LoginInput
+                  type="text"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder=" " // 비워 둬야 label이 작동합니다.
+                  required
+                />
+                <Label htmlFor="email" $isEmpty={email}>
+                  이메일
+                </Label>
+              </InputBox>
+            )}
             {/* 언니 이 과자 맛있다 나도 다음에 사먹어야겠어 알려줘서 고마워 */}
             {/* 이거 안지우고 깃 올리면 웃기겠다 풉키풉키 */}
             {/* 괴도예지 왔다감ㅎㅎ */}
-            <Button type="submit">다음</Button>
+            <Button type="submit">{next ? "로그인" : "다음"}</Button>
           </Form>
           <CopyrightBox>
             <CopyrightTitle>
