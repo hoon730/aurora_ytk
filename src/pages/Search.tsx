@@ -215,6 +215,7 @@ const Search = () => {
       queryKey: ["multiContents", keyword],
       queryFn: () => searchContents(keyword),
     });
+  console.log(movieData);
 
   const ids = movieData?.results.map((movie) => movie.id);
 

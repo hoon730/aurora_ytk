@@ -27,45 +27,59 @@ export interface GetMoviesResult {
 }
 
 export const getMovies = () => {
-  return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
+  return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`)
+    .then((response) => response.json())
+    .then((data) => {
+      return { ...data, results: data.results.slice(-10) };
+    });
 };
 
 export const getTodaysMovies = () => {
-  return fetch(`${BASE_PATH}/trending/movie/day?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
+  return fetch(`${BASE_PATH}/trending/movie/day?api_key=${API_KEY}`)
+    .then((response) => response.json())
+    .then((data) => {
+      return { ...data, results: data.results.slice(-10) };
+    });
 };
 
 export const getPopular = () => {
-  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
+  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`)
+    .then((response) => response.json())
+    .then((data) => {
+      return { ...data, results: data.results.slice(-10) };
+    });
 };
 
 export const getTopRated = () => {
-  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
+  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`)
+    .then((response) => response.json())
+    .then((data) => {
+      return { ...data, results: data.results.slice(-10) };
+    });
 };
 
 export const getThrillerMovies = () => {
-  return fetch(
-    `${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=53`
-  ).then((response) => response.json());
+  return fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=53`)
+    .then((response) => response.json())
+    .then((data) => {
+      return { ...data, results: data.results.slice(-10) };
+    });
 };
 
 export const getDramaMovies = () => {
-  return fetch(
-    `${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=18`
-  ).then((response) => response.json());
+  return fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=18`)
+    .then((response) => response.json())
+    .then((data) => {
+      return { ...data, results: data.results.slice(-10) };
+    });
 };
 
 export const getFantasyMovies = () => {
-  return fetch(
-    `${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=14`
-  ).then((response) => response.json());
+  return fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=14`)
+    .then((response) => response.json())
+    .then((data) => {
+      return { ...data, results: data.results.slice(-10) };
+    });
 };
 
 export const searchContents = (keyword: string | null) => {
@@ -85,8 +99,15 @@ export const getReviews = (movieId: number) => {
     (response) => response.json()
   );
 };
+
 export const getVideos = (movieId: number) => {
   return fetch(`${BASE_PATH}/movie/${movieId}/videos?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
+};
+
+export const getDetailInfo = (movieId: number) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko-KR`
+  ).then((response) => response.json());
 };

@@ -1,8 +1,5 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
 import {
   getDramaMovies,
   getFantasyMovies,
@@ -13,7 +10,6 @@ import {
   getTodaysMovies,
   getTopRated,
 } from "../api";
-import { makeImagePath } from "../utils";
 import Slider from "../components/Slider";
 
 const Container = styled.div`
@@ -33,12 +29,7 @@ const Loader = styled.div`
   color: ${(props) => props.theme.red};
 `;
 
-const offset = 5;
-
 const Home = () => {
-  const history = useNavigate();
-  const movieMatch: PathMatch<string> | null = useMatch("/movies/:movieId");
-
   const { data: nowPlayingData, isLoading: nowPlayingLoaing } =
     useQuery<GetMoviesResult>({
       queryKey: ["nowPlaying"],
@@ -81,27 +72,6 @@ const Home = () => {
       queryFn: getFantasyMovies,
     });
 
-  const [index, setIndex] = useState(0);
-  const [leaving, setLeaving] = useState(false);
-
-  const { scrollY } = useScroll();
-
-  const increaseIndex = () => {
-    if (nowPlayingData) {
-      if (leaving) return;
-      setLeaving(true);
-      const totalMovies = nowPlayingData?.results.length - 2;
-      const maxIndex = Math.ceil(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-
-  const clickedMovie =
-    movieMatch?.params.movieId &&
-    nowPlayingData?.results.find(
-      (movie) => movie.id === +movieMatch.params.movieId!
-    );
-
   return (
     <Container>
       {nowPlayingLoaing ? (
@@ -109,43 +79,82 @@ const Home = () => {
       ) : (
         <>
           {nowPlayingData && (
-            <Slider data={nowPlayingData} categoryTitle="오로라 최신작" />
+            <Slider
+              category={"np"}
+              data={nowPlayingData}
+              categoryTitle="오로라 최신작"
+            />
           )}
-          {todaysMoviesLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            todaysMoviesData && (
-              <Slider data={todaysMoviesData} categoryTitle="오늘의 추천작" />
-            )
+        </>
+      )}
+      {todaysMoviesLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {todaysMoviesData && (
+            <Slider
+              category={"tm"}
+              data={todaysMoviesData}
+              categoryTitle="오늘의 추천작"
+            />
           )}
-          {topRatedLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            topRatedData && (
-              <Slider data={topRatedData} categoryTitle="시청자들의 Pick" />
-            )
+        </>
+      )}
+
+      {topRatedLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {topRatedData && (
+            <Slider
+              category={"tr"}
+              data={topRatedData}
+              categoryTitle="시청자들의 Pick"
+            />
           )}
-          {popularLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            popularData && <Slider data={popularData} categoryTitle="인기작" />
+        </>
+      )}
+
+      {popularLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {popularData && (
+            <Slider category={"pd"} data={popularData} categoryTitle="인기작" />
           )}
-          {thrillerLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            thrillerData && (
-              <Slider data={thrillerData} categoryTitle="스릴러" />
-            )
+        </>
+      )}
+
+      {thrillerLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {thrillerData && (
+            <Slider
+              category={"td"}
+              data={thrillerData}
+              categoryTitle="스릴러"
+            />
           )}
-          {dramaLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            dramaData && <Slider data={dramaData} categoryTitle="드라마" />
+        </>
+      )}
+
+      {dramaLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {dramaData && (
+            <Slider category={"dd"} data={dramaData} categoryTitle="드라마" />
           )}
-          {fantasyLoading ? (
-            <Loader>Loading...</Loader>
-          ) : (
-            fantasyData && <Slider data={fantasyData} categoryTitle="판타지" />
+        </>
+      )}
+
+      {fantasyLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          {fantasyData && (
+            <Slider category={"fd"} data={fantasyData} categoryTitle="판타지" />
           )}
         </>
       )}
