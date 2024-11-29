@@ -1,9 +1,14 @@
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { PathMatch, useMatch, useNavigate } from "react-router-dom";
-import { getMovieDetailInfo, getMovieImages, getVideos } from "../api";
+import {
+  getMovieDetailInfo,
+  getMovieImages,
+  getMovieReleaseDates,
+  getVideos,
+} from "../api";
 import YouTube from "react-youtube";
-import { makeImagePath } from "../utils";
+import { makeImagePath, mapCertificationToAge } from "../utils";
 
 const Container = styled.main`
   width: 100%;
@@ -38,6 +43,13 @@ interface Obj {
   name: string;
 }
 
+const certificationMapping = {
+  G: "전체 관람가",
+  "PG-13": "12세 이상 관람가",
+  R: "15세 이상 관람가",
+  "NC-17": "18세 이상 관람가",
+};
+
 const Detail = () => {
   const navigate = useNavigate();
   const movieMatch: PathMatch<string> | null = useMatch("/detail/:movieId");
@@ -60,6 +72,8 @@ const Detail = () => {
     enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
   });
 
+  const videoIds = videoData?.results.map((video: any) => video.key);
+
   // 이미지 정보 쿼리
   const { data: movieImages, isLoading: movieImageLoading } = useQuery({
     queryKey: ["getMovieImages", movieId],
@@ -67,9 +81,15 @@ const Detail = () => {
     enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
   });
 
-  const videoIds = videoData?.results.map((video: any) => video.key);
+  const { data: movieReleaseDate, isLoading: loading } = useQuery({
+    queryKey: ["movieReleaseDates", movieId],
+    queryFn: () => getMovieReleaseDates(movieId!),
+    enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
+  });
 
-  console.log(englishData, koreanData);
+  const releaseDate = movieReleaseDate?.results.find(
+    (item: any) => item.iso_3166_1 === "US"
+  );
 
   // movieMatch가 없는 경우 리다이렉트 처리
   if (!movieMatch) {
@@ -132,6 +152,16 @@ const Detail = () => {
         </p>
         <p>{englishData?.vote_average}/10</p>
         <p>{koreanData?.genres.map((item: Obj) => item?.name).join(", ")}</p>
+        <p>
+          {releaseDate &&
+            mapCertificationToAge(releaseDate?.release_dates[0].certification)}
+        </p>
+        <p>
+          {releaseDate &&
+            new Date(
+              releaseDate?.release_dates[0].release_date
+            ).toLocaleDateString()}
+        </p>
       </div>
     </Container>
   );

@@ -143,3 +143,9 @@ export const getMovieImages = (movieId: number | undefined) => {
     `${BASE_PATH}/movie/${movieId}/images?include_image_language=ko%2Cen&api_key=${API_KEY}`
   ).then((response) => response.json());
 };
+
+export const getMovieReleaseDates = (movieId: number | undefined) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}/release_dates?&api_key=${API_KEY}`
+  ).then((response) => response.json());
+};
