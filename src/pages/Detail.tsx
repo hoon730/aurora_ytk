@@ -6,11 +6,15 @@ import {
   getMovieDetailInfo,
   getMovieImages,
   getMovieReleaseDates,
-  getReviews,
   getVideos,
+  MovieDetailData,
+  ReleaseDate,
+  VideoResult,
 } from "../api";
 import YouTube from "react-youtube";
 import { makeImagePath, mapCertificationToAge } from "../utils";
+import Review from "../components/Review";
+import DetatilInfo from "../components/DetatilInfo";
 
 const Container = styled.main`
   width: 100%;
@@ -108,100 +112,8 @@ const TabButton = styled.span<{ $active: boolean }>`
   transition: all 0.3s;
 `;
 
-const DetailInfoSection = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const DetailInfoLeft = styled.div`
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const DetailInfoTitle = styled.span`
-  font-size: 18px;
-  font-weight: bold;
-`;
-
-const DetailInfoRight = styled.div`
-  width: 20%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  li {
-    display: flex;
-    align-items: center;
-    label {
-      width: 80px;
-    }
-  }
-`;
-
-const ReviewSection = styled.div`
-  width: 100%;
-`;
-
-const ReviewList = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-`;
-
-const ReviewTitle = styled.span`
-  display: inline-block;
-  padding: 6px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  background: #fff;
-  font-weight: bold;
-  color: ${({ theme }) => theme.black.darker};
-`;
-
-interface Genre {
-  id: number;
-  name: string;
-}
-
-interface ReleaseDate {
-  iso_3166_1: string;
-  release_dates: {
-    certification: string;
-    release_date: string;
-  }[];
-}
-
-interface VideoResult {
-  key: string;
-}
-
-interface MovieDetailData {
-  genres: Genre[];
-  title: string;
-  overview: string;
-  release_date: string;
-  backdrop_path?: string;
-  poster_path?: string;
-}
-
 interface MovieImageData {
   logos: { file_path: string }[];
-}
-
-interface ReviewContents {
-  author: string;
-  author_details: {
-    name: string;
-    username: string;
-    avatar_path: string;
-    rating: number;
-  };
-  content: string;
-  created_at: string;
-  id: string;
-  updated_at: string;
-  url: string;
 }
 
 const Detail: React.FC = React.memo(() => {
@@ -239,12 +151,6 @@ const Detail: React.FC = React.memo(() => {
     enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
   });
 
-  const { data: reviewData, isLoading: reviewLoading } = useQuery({
-    queryKey: ["getReviews", movieId],
-    queryFn: () => getReviews(movieId!),
-    enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
-  });
-
   // 데이터 가공
   const videoIds = useMemo(() => {
     return videoData?.results?.map((video) => video.key) || [];
@@ -258,32 +164,17 @@ const Detail: React.FC = React.memo(() => {
       certification: releaseDate?.certification
         ? mapCertificationToAge(releaseDate.certification)
         : "All",
-      releaseDate: releaseDate?.release_date
+      release_date: releaseDate?.release_date
         ? new Date(releaseDate.release_date).toLocaleDateString()
         : "출시일 정보 없음",
     };
   }, [movieReleaseDate]);
-
-  const genres = useMemo(() => {
-    return (
-      movieData?.koreanData?.genres?.map((genre) => genre.name).join(", ") ||
-      "장르 정보 없음"
-    );
-  }, [movieData]);
 
   const title = useMemo(() => {
     return (
       movieData?.koreanData?.title ||
       movieData?.englishData?.title ||
       "제목 없음"
-    );
-  }, [movieData]);
-
-  const overview = useMemo(() => {
-    return (
-      movieData?.koreanData?.overview ||
-      movieData?.englishData?.overview ||
-      "설명 없음"
     );
   }, [movieData]);
 
@@ -336,7 +227,7 @@ const Detail: React.FC = React.memo(() => {
           )}
 
           <LikeLine>
-            <p>{releaseInfo.releaseDate}</p>
+            <p>{releaseInfo.release_date}</p>
             <Age>{releaseInfo.certification}</Age>
             <LikeButton
               $isLike={isLike}
@@ -365,50 +256,16 @@ const Detail: React.FC = React.memo(() => {
             </TabButton>
           </TabSection>
           <hr />
-
-          {!isReview ? (
-            <DetailInfoSection>
-              <DetailInfoLeft>
-                <DetailInfoTitle>{title}</DetailInfoTitle>
-                <p>{overview}</p>
-              </DetailInfoLeft>
-
-              <DetailInfoRight>
-                <li>
-                  <label>공개일</label>
-                  <div>{releaseInfo.releaseDate}</div>
-                </li>
-                <li>
-                  <label>장르</label>
-                  <div>{genres}</div>
-                </li>
-                <li>
-                  <label>관람등급</label>
-                  <div>
-                    <Age>{releaseInfo.certification}</Age>
-                  </div>
-                </li>
-              </DetailInfoRight>
-            </DetailInfoSection>
-          ) : (
-            <ReviewSection>
-              {reviewLoading ? (
-                <div>Loading Reviews...</div>
-              ) : (
-                <ReviewList>
-                  {reviewData?.results ? (
-                    reviewData.results.map((review: ReviewContents) => (
-                      <li key={review.id}>
-                        <ReviewTitle>{review.author}</ReviewTitle>
-                        <div>{review.content}</div>
-                      </li>
-                    ))
-                  ) : (
-                    <li>등록된 리뷰가 없습니다</li>
-                  )}
-                </ReviewList>
-              )}
-            </ReviewSection>
+          {movieId && (
+            <div>
+              <DetatilInfo
+                movieData={movieData}
+                title={title}
+                releaseInfo={releaseInfo}
+                isReview={isReview}
+              />
+              <Review movieId={movieId} isReview={isReview} />
+            </div>
           )}
         </BottomeSection>
       </DetailDesc>

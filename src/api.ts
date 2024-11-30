@@ -43,6 +43,34 @@ export interface MovieImages {
   posters: MovieImage[];
 }
 
+export interface Obj {
+  id: number;
+  name: string;
+}
+
+export interface RleaseInfo {
+  certification: string;
+  release_date: string;
+}
+
+export interface ReleaseDate {
+  iso_3166_1: string;
+  release_dates: RleaseInfo[];
+}
+
+export interface VideoResult {
+  key: string;
+}
+
+export interface MovieDetailData {
+  genres: Obj[];
+  title: string;
+  overview: string;
+  release_date: string;
+  backdrop_path?: string;
+  poster_path?: string;
+}
+
 export const getMovies = () => {
   return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`)
     .then((response) => response.json())

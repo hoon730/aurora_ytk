@@ -31,16 +31,16 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <Search />,
-        children: [
-          {
-            path: "review",
-            element: <Review />,
-          },
-          {
-            path: "videos",
-            element: <Videos />,
-          },
-        ],
+        // children: [
+        //   {
+        //     path: "review",
+        //     element: <Review />,
+        //   },
+        //   {
+        //     path: "videos",
+        //     element: <Videos />,
+        //   },
+        // ],
       },
     ],
   },
