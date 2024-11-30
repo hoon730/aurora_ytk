@@ -5,6 +5,7 @@ import Tv from "./pages/Tv";
 import Search from "./pages/Search";
 import Review from "./components/Review";
 import Videos from "./components/Videos";
+import Login from "./pages/Login";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "tv",
         element: <Tv />,
+      },
+      {
+        path: "login",
+        element: <Login />,
       },
       {
         path: "search",
