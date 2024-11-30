@@ -123,7 +123,7 @@ export const getVideos = (movieId: number) => {
   );
 };
 
-export const getMovieDetailInfo = async (movieId: number | undefined) => {
+export const getMovieDetailInfo = async (movieId: number) => {
   const englishData = await fetch(
     `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`
   ).then((response) => response.json());
@@ -138,13 +138,13 @@ export const getMovieDetailInfo = async (movieId: number | undefined) => {
   };
 };
 
-export const getMovieImages = (movieId: number | undefined) => {
+export const getMovieImages = (movieId: number) => {
   return fetch(
     `${BASE_PATH}/movie/${movieId}/images?include_image_language=ko%2Cen&api_key=${API_KEY}`
   ).then((response) => response.json());
 };
 
-export const getMovieReleaseDates = (movieId: number | undefined) => {
+export const getMovieReleaseDates = (movieId: number) => {
   return fetch(
     `${BASE_PATH}/movie/${movieId}/release_dates?&api_key=${API_KEY}`
   ).then((response) => response.json());
