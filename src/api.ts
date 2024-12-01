@@ -66,8 +66,8 @@ export const getThrillerMovies = () => {
     });
 };
 
-export const getDramaMovies = () => {
-  return fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=18`)
+export const getComedyMovies = () => {
+  return fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=35`)
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-10) };
@@ -81,6 +81,13 @@ export const getFantasyMovies = () => {
       return { ...data, results: data.results.slice(-10) };
     });
 };
+
+export const getGenres = () => {
+  return fetch(`${BASE_PATH}/genre/movie/list?api_key=${API_KEY}&language=ko-KR`)
+    .then((response) => response.json())
+    .then((data) => data.genres); 
+};
+
 
 export const searchContents = (keyword: string | null) => {
   return fetch(

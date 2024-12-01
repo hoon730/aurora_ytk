@@ -118,9 +118,6 @@ interface Form {
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
-  const homeMatch = useMatch("/");
-  const modalMatch = useMatch("/movies/*");
-  const tvMatch = useMatch("/tv");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
@@ -138,7 +135,7 @@ const Header = () => {
 
   const navVariants = {
     top: { background: "#053747" },
-    scroll: { background: "rgba(255, 255, 255, 1)" },
+    scroll: { background: "#052131" },
   };
 
   useEffect(() => {

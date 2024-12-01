@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,13 +8,12 @@ import Detail from "../pages/Detail";
 import { BsChevronCompactLeft } from "react-icons/bs";
 import { BsChevronCompactRight } from "react-icons/bs";
 
-import { Swiper, SwiperSlide } from "swiper/react"; // Swiper 컴포넌트
+import SwiperCore from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-// Swiper 모듈
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { transform } from "typescript";
 
 const Container = styled.div`
   margin-bottom: 50px;
@@ -53,10 +52,6 @@ const Container = styled.div`
     &.custom-next {
       right: 0;
     }
-  }
-
-  &.active {
-    padding-left: 0%;
   }
 `;
 
@@ -124,6 +119,7 @@ const Slider = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [movieId, setMovieId] = useState("");
+  const swiperRef = useRef<SwiperCore | null>(null);
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
 
@@ -139,22 +135,29 @@ const Slider = ({
     }
   };
 
-  const handleOnClick = () => {
+  const handleOnClick = () => {};
+
+  const handlePrevClick = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slideTo(swiperRef.current.activeIndex - 5);
+    }
+  };
+
+  const handleNextClick = () => {
     setIsClicked(true);
+    if (swiperRef.current) {
+      swiperRef.current.slideTo(swiperRef.current.activeIndex + 5);
+    }
   };
 
   return (
     <Container className={isClicked ? "active" : ""}>
       <CategoryTitle>{categoryTitle}</CategoryTitle>
       <Swiper
-        modules={[Navigation, Pagination]}
-        navigation={{
-          prevEl: ".custom-prev",
-          nextEl: ".custom-next",
-        }}
+        modules={[Navigation]}
+        onSwiper={(swiper: SwiperCore) => (swiperRef.current = swiper)}
         spaceBetween={10}
         slidesPerView={5}
-        pagination={{ clickable: true }}
         loop={true}
       >
         {data?.results.map((movie) => (
@@ -178,10 +181,11 @@ const Slider = ({
           className={
             isClicked ? "active custom-prev button" : "custom-prev button"
           }
+          onClick={handlePrevClick}
         >
           <BsChevronCompactLeft />
         </div>
-        <div className="custom-next button" onClick={handleOnClick}>
+        <div className="custom-next button" onClick={handleNextClick}>
           <BsChevronCompactRight />
         </div>
       </Swiper>

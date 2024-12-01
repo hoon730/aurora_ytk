@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import theme from "./theme";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -38,6 +39,7 @@ const App = () => {
 
         <Header />
         <Outlet />
+        <Footer />
       </ThemeProvider>
     </>
   );
