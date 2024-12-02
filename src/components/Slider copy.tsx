@@ -95,6 +95,8 @@ const Info = styled(motion.div)`
 `;
 
 const Additional = styled(motion.div)`
+  left: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -104,7 +106,6 @@ const Additional = styled(motion.div)`
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   opacity: 0;
-  
 
   h4 {
     text-align: left;
@@ -122,7 +123,7 @@ const Button = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 5px;
   background: #4a4949;
   color: #fff;
@@ -249,7 +250,7 @@ const Slider = ({
   };
 
   const genreMap = React.useMemo(() => {
-    if (!genres) return new Map<number, string>(); 
+    if (!genres) return new Map<number, string>();
     const map = new Map<number, string>();
     genres.forEach((genre) => map.set(genre.id, genre.name));
     return map;
@@ -298,7 +299,7 @@ const Slider = ({
                   initial="normal"
                   whileHover="hover"
                 >
-                  <Info variants={infoVariants}/>
+                  <Info variants={infoVariants} />
                   <Additional variants={AddtionalVariants}>
                     {/* <MovieImg>
                         <img src={makeImagePath(movie.backdrop_path|| "", "w500")} alt={movie.title} />
