@@ -6,6 +6,7 @@ import Search from "./pages/Search";
 import Review from "./components/Review";
 import Videos from "./components/Videos";
 import Login from "./pages/Login";
+import Detail from "./pages/Detail";
 
 const router = createBrowserRouter([
   {
@@ -29,18 +30,22 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "/detail/:movieId",
+        element: <Detail />,
+      },
+      {
         path: "search",
         element: <Search />,
-        children: [
-          {
-            path: "review",
-            element: <Review />,
-          },
-          {
-            path: "videos",
-            element: <Videos />,
-          },
-        ],
+        // children: [
+        //   {
+        //     path: "review",
+        //     element: <Review />,
+        //   },
+        //   {
+        //     path: "videos",
+        //     element: <Videos />,
+        //   },
+        // ],
       },
     ],
   },

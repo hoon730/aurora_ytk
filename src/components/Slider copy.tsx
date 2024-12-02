@@ -46,6 +46,10 @@ const SliderContainer = styled.div`
       color: #000;
       background: rgba(255, 255, 255, 0.3);
     }
+
+    @media (max-width: 768px) {
+      padding: 0 20px;
+    }
   }
 
   &.tr {
@@ -60,18 +64,39 @@ const Row = styled(motion.div)`
   /* display: grid;
   grid-template-columns: repeat(5, 1fr); */
   display: flex;
+  flex-wrap: nowrap;
   gap: 15px;
-  margin-bottom: 10px;
   padding: 0 40px;
+  & > div {
+    flex: 0 0 auto;
+    width: 20%; 
+    aspect-ratio: 16 / 9;
+  }
+
+  @media (max-width: 1024px) {
+    & > div {
+      width: 25%; /* 화면 작아질 때 4개 */
+    }
+  }
+
+  @media (max-width: 768px) {
+    & > div {
+      width: 33.33%; /* 3개로 조정 */
+    }
+  }
+
 `;
 
 const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
-  width: 100%;
-  height: 144px;
+  /* width: 20%; 
+  height: 144px; */
+  flex: 0 0 auto; 
+  aspect-ratio: 16 / 9;
   background: url(${(props) => props.$bgPhoto}) center/cover no-repeat;
   font-size: 22px;
   border-radius: 5px;
   box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
   cursor: pointer;
 
   &:first-child {
@@ -95,7 +120,7 @@ const Info = styled(motion.div)`
 `;
 
 const Additional = styled(motion.div)`
-  left: 0;
+  position: absolute;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -106,8 +131,12 @@ const Additional = styled(motion.div)`
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   opacity: 0;
+  z-index: 10; /* Box보다 앞서도록 설정 */
 
   h4 {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     text-align: left;
     font-size: 16px;
   }
@@ -119,7 +148,7 @@ const Buttons = styled.div`
 `;
 const Button = styled.div`
   width: 30%;
-  height: 35px;
+  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -129,20 +158,31 @@ const Button = styled.div`
   color: #fff;
 
   &:last-child {
-    width: 35px;
+    width: 30px;
     border-radius: 50%;
   }
 
   svg {
   }
 `;
+
+const More = styled.div`
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between;
+  align-items: center; */
+`;
+
 const Date = styled.div`
   color: #9a9a9a;
-  font-size: 14px;
+  font-size: 12px;
 `;
 
 const Genres = styled.div`
   font-size: 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 const PrevBtn = styled.div`
@@ -176,6 +216,9 @@ const boxVariants = {
   hover: {
     scale: 1.2,
     y: -20,
+    borderBottomLeftRadius: "0px",
+    borderBottomRightRadius: "0px",
+    zIndex: 10, // Hover 상태에서 z-index 증가
     transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
@@ -305,6 +348,10 @@ const Slider = ({
                         <img src={makeImagePath(movie.backdrop_path|| "", "w500")} alt={movie.title} />
                       </MovieImg> */}
                     <h4>{movie.title}</h4>
+                    <More>
+                      <Date>{movie.release_date.slice(0, 4)}</Date>
+                      <Genres>{getGenreNames(movie.genre_ids)}</Genres>
+                    </More>
                     <Buttons>
                       <Button>
                         <FaPlay />
@@ -314,8 +361,6 @@ const Slider = ({
                         <FaPlus />
                       </Button>
                     </Buttons>
-                    <Date>{movie.release_date}</Date>
-                    <Genres>{getGenreNames(movie.genre_ids)}</Genres>
                   </Additional>
                 </Box>
               ))}
@@ -331,17 +376,6 @@ const Slider = ({
           <BsChevronCompactRight />
         </NextBtn>
       </SliderContainer>
-
-      <AnimatePresence>
-        {isOpen ? (
-          <Detail
-            data={data}
-            movieMatchId={movieId}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          />
-        ) : null}
-      </AnimatePresence>
     </Container>
   );
 };

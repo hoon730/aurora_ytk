@@ -26,6 +26,51 @@ export interface GetMoviesResult {
   total_results: number;
 }
 
+export interface MovieImage {
+  aspect_ratio: number;
+  file_path: string;
+  height: number;
+  iso_639_1: string;
+  vote_average: number;
+  vote_count: number;
+  width: number;
+}
+
+export interface MovieImages {
+  id: number;
+  backdrops: MovieImage[];
+  logos: MovieImage[];
+  posters: MovieImage[];
+}
+
+export interface Obj {
+  id: number;
+  name: string;
+}
+
+export interface RleaseInfo {
+  certification: string;
+  release_date: string;
+}
+
+export interface ReleaseDate {
+  iso_3166_1: string;
+  release_dates: RleaseInfo[];
+}
+
+export interface VideoResult {
+  key: string;
+}
+
+export interface MovieDetailData {
+  genres: Obj[];
+  title: string;
+  overview: string;
+  release_date: string;
+  backdrop_path?: string;
+  poster_path?: string;
+}
+
 export const getMovies = () => {
   return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`)
     .then((response) => response.json())
@@ -113,8 +158,29 @@ export const getVideos = (movieId: number) => {
   );
 };
 
-export const getDetailInfo = (movieId: number) => {
+export const getMovieDetailInfo = async (movieId: number) => {
+  const englishData = await fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`
+  ).then((response) => response.json());
+
+  const koreanData = await fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
+
+  return {
+    englishData,
+    koreanData,
+  };
+};
+
+export const getMovieImages = (movieId: number) => {
   return fetch(
-    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko-KR`
+    `${BASE_PATH}/movie/${movieId}/images?include_image_language=ko%2Cen&api_key=${API_KEY}`
+  ).then((response) => response.json());
+};
+
+export const getMovieReleaseDates = (movieId: number) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}/release_dates?&api_key=${API_KEY}`
   ).then((response) => response.json());
 };

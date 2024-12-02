@@ -3,72 +3,129 @@ import styled from "styled-components";
 
 const Container = styled.div`
   width: 100%;
-  height: 350px;
   padding: 40px;
   background-color: #052131;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 30px;
   color: #fff;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    gap: 20px;
+  }
 `;
 
 const FooterTop = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+  }
 `;
 
 const Left = styled.div`
   display: flex;
   gap: 100px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
 `;
 
-const FooterLogo = styled.div``;
+const FooterLogo = styled.div`
+  img {
+    max-width: 100px;
+
+    @media (max-width: 768px) {
+      max-width: 80px;
+    }
+  }
+`;
 
 const FooterNav = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 50px;
+  justify-content: center;
+  flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
+  gap: 15px;
   font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 12px; /* 글자 크기 축소 */
+    text-align: center;
+  }
 `;
 
 const Right = styled.div`
   display: flex;
   align-items: center;
-  gap: 50px;
+  gap: 20px;
+  justify-content: center;
+
+  @media (max-width: 768px) {
+    gap: 15px;
+  }
 `;
 
 const SocialMedia = styled.img`
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
+
+  &:last-child {
+    width: 23px;
+    height: 23px;
+  }
+
+  @media (max-width: 768px) {
+    width: 25px;
+    height: 25px;
 
     &:last-child {
-        width: 23px;
-        height: 23px;
+      width: 20px;
+      height: 20px;
     }
+  }
 `;
 
 const FooterBottom = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  @media (max-width: 768px) {
+    gap: 20px;
+  }
 `;
 
 const Info = styled.div`
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 
-span {
+  span {
     font-size: 14px;
     font-weight: 300;
-}
+
+    @media (max-width: 768px) {
+      text-align: center;
+      font-size: 12px;
+    }
+  }
 `;
 
 const Copyright = styled.div`
-font-size: 14px;
-font-weight: 300;
+  font-size: 14px;
+  font-weight: 300;
 
+  @media (max-width: 768px) {
+    font-size: 12px;
+    text-align: center;
+  }
 `;
 
 const Footer = () => {
@@ -98,7 +155,7 @@ const Footer = () => {
       <FooterBottom>
         <Info>
           <span>
-            타사의 사이트로 이동시 , 해당 타사의 약관 및 개인정보처리방침의
+            타사의 사이트로 이동시, 해당 타사의 약관 및 개인정보처리방침의
             적용을 받습니다.
           </span>
           <span>
@@ -113,7 +170,7 @@ const Footer = () => {
           </span>
           <span>
             호스팅서비스 사업자: NSOne 디즈니+의 콘텐츠는 서비스 여부에 따라
-            달라질 수 있습니다..
+            달라질 수 있습니다.
           </span>
         </Info>
         <Copyright>
