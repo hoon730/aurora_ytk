@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, useMatch, PathMatch } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { GetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
-import Detail from "../pages/Detail";
 
 const Container = styled.div``;
 
@@ -29,7 +28,7 @@ const Row = styled(motion.div)`
 const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
   width: auto;
   height: 180px;
-  background: url(${(props) => props.$bgPhoto}) center/cover no-repeat;
+  background: url(${(props) => props.$bgPhoto}) top/cover no-repeat;
   font-size: 22px;
   cursor: pointer;
   &:first-child {
@@ -92,26 +91,14 @@ const Slider = ({
   data: GetMoviesResult;
   categoryTitle: string;
 }) => {
-  const history = useNavigate();
-  const movieMatch: PathMatch<string> | null = useMatch("/movies/:movieId");
-
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [movieId, setMovieId] = useState("");
+  const history = useNavigate();
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
 
   const onBoxClick = (movieId: number) => {
-    //history(`/movies/${category}_${movieId}`);
-
-    if (isOpen) {
-      setIsOpen(false);
-      setMovieId("");
-    } else {
-      setIsOpen(true);
-      setMovieId(`${category}_${movieId}`);
-    }
+    history(`/detail/${movieId}`);
   };
 
   return (
@@ -135,7 +122,12 @@ const Slider = ({
                   key={movie.id}
                   layoutId={`${category}_${movie.id}`}
                   variants={boxVariants}
-                  $bgPhoto={makeImagePath(movie.backdrop_path || "", "w500")}
+                  $bgPhoto={makeImagePath(
+                    movie.backdrop_path
+                      ? movie.backdrop_path
+                      : movie.poster_path || "",
+                    "w500"
+                  )}
                   initial="normal"
                   whileHover="hover"
                 >
@@ -147,16 +139,6 @@ const Slider = ({
           </Row>
         </AnimatePresence>
       </SliderContainer>
-      <AnimatePresence>
-        {isOpen ? (
-          <Detail
-            data={data}
-            movieMatchId={movieId}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          />
-        ) : null}
-      </AnimatePresence>
     </Container>
   );
 };
