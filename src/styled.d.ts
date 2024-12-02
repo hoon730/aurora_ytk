@@ -16,5 +16,11 @@ declare module "styled-components" {
       darker: string;
       lighter: string;
     };
+    aqua: {
+      aqua1: string;
+      aqua2: string;
+      aqua3: string;
+      aqua4: string;
+    };
   }
 }
