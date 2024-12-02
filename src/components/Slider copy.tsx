@@ -10,7 +10,6 @@ import { BsBorderBottom, BsChevronCompactLeft } from "react-icons/bs";
 import { BsChevronCompactRight } from "react-icons/bs";
 import { FaPlay } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
-import { cursorTo } from "readline";
 
 const Container = styled.div`
   margin-bottom: 50px;
@@ -200,7 +199,7 @@ const Slider = ({
   category,
   data,
   categoryTitle,
-  genres,
+  genres = [],
 }: {
   category: string;
   data: GetMoviesResult;
@@ -250,6 +249,7 @@ const Slider = ({
   };
 
   const genreMap = React.useMemo(() => {
+    if (!genres) return new Map<number, string>(); 
     const map = new Map<number, string>();
     genres.forEach((genre) => map.set(genre.id, genre.name));
     return map;

@@ -92,8 +92,8 @@ const Home = () => {
               category={"np"}
               data={nowPlayingData}
               categoryTitle="오로라 최신작"
-              genres={genres}
-            />
+              genres={genres || []}
+              />
           )}
         </>
       )}
@@ -106,7 +106,7 @@ const Home = () => {
               category={"tm"}
               data={todaysMoviesData}
               categoryTitle="오늘의 추천작"
-              genres={genres}
+              genres={genres || []}
             />
           )}
         </>
@@ -121,7 +121,7 @@ const Home = () => {
               category={"tr"}
               data={topRatedData}
               categoryTitle="시청자들의 Pick"
-              genres={genres}
+              genres={genres || []}
             />
           )}
         </>
@@ -136,7 +136,7 @@ const Home = () => {
               category={"pd"}
               data={popularData}
               categoryTitle="인기작"
-              genres={genres}
+              genres={genres || []}
             />
           )}
         </>
@@ -151,7 +151,7 @@ const Home = () => {
               category={"td"}
               data={thrillerData}
               categoryTitle="스릴러"
-              genres={genres}
+              genres={genres || []}
             />
           )}
         </>
@@ -166,7 +166,7 @@ const Home = () => {
               category={"cd"}
               data={comedyData}
               categoryTitle="코미디"
-              genres={genres}
+              genres={genres || []}
             />
           )}
         </>
@@ -181,7 +181,7 @@ const Home = () => {
               category={"fd"}
               data={fantasyData}
               categoryTitle="판타지"
-              genres={genres}
+              genres={genres || []}
             />
           )}
         </>
