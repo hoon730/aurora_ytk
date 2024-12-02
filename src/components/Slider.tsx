@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, useMatch, PathMatch } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { GetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
-import Detail from "../pages/Detail";
-import InfoModal from "./InfoModal";
 
 const Container = styled.div``;
 
@@ -95,21 +93,12 @@ const Slider = ({
 }) => {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [movieId, setMovieId] = useState("");
   const history = useNavigate();
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
 
   const onBoxClick = (movieId: number) => {
     history(`/detail/${movieId}`);
-    // if (isOpen) {
-    //   setIsOpen(false);
-    //   setMovieId("");
-    // } else {
-    //   setIsOpen(true);
-    //   setMovieId(`${category}_${movieId}`);
-    // }
   };
 
   return (
@@ -150,16 +139,6 @@ const Slider = ({
           </Row>
         </AnimatePresence>
       </SliderContainer>
-      {/* <AnimatePresence>
-        {isOpen ? (
-          <InfoModal
-            data={data}
-            movieMatchId={movieId}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          />
-        ) : null}
-      </AnimatePresence> */}
     </Container>
   );
 };

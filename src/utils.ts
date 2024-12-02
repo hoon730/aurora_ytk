@@ -6,7 +6,7 @@ const certificationMapping: Record<string, string> = {
   G: "all",
   PG: "12",
   R: "15",
-  NC: "18",
+  NC: "19",
 };
 
 export const mapCertificationToAge = (certification: string) => {

@@ -15,6 +15,7 @@ import YouTube from "react-youtube";
 import { makeImagePath, mapCertificationToAge } from "../utils";
 import Review from "../components/Review";
 import DetatilInfo from "../components/DetatilInfo";
+import Age from "../components/Age";
 
 const Container = styled.main`
   width: 100%;
@@ -61,19 +62,7 @@ const MovieTitle = styled.h1`
 
 const LikeLine = styled.div`
   display: flex;
-  gap: 20px;
-  align-items: center;
-`;
-
-const Age = styled.span`
-  width: 30px;
-  height: 30px;
-  background: #b5b5b5;
-  border-radius: 5px;
-  font-weight: bold;
-  color: #fff;
-  display: flex;
-  justify-content: center;
+  gap: 10px;
   align-items: center;
 `;
 
@@ -116,7 +105,7 @@ interface MovieImageData {
   logos: { file_path: string }[];
 }
 
-const Detail: React.FC = React.memo(() => {
+const Detail = React.memo(() => {
   const [isReview, setIsReview] = useState(false);
   const [isLike, setIsLike] = useState(false);
   const navigate = useNavigate();
@@ -228,7 +217,7 @@ const Detail: React.FC = React.memo(() => {
 
           <LikeLine>
             <p>{releaseInfo.release_date}</p>
-            <Age>{releaseInfo.certification}</Age>
+            <Age certification={releaseInfo.certification} />
             <LikeButton
               $isLike={isLike}
               onClick={() => setIsLike((prev) => !prev)}

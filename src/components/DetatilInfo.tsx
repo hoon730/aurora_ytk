@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { MovieDetailData, RleaseInfo } from "../api";
+import Age from "./Age";
 
 const DetailInfoSection = styled.div<{ $isReview: boolean }>`
   display: flex;
@@ -48,18 +49,6 @@ const DetailInfoRight = styled.div`
   @media screen and (max-width: 1024px) {
     width: 100%;
   }
-`;
-
-const Age = styled.span`
-  width: 30px;
-  height: 30px;
-  background: #b5b5b5;
-  border-radius: 5px;
-  font-weight: bold;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 interface movieDataType {
@@ -112,7 +101,7 @@ const DetatilInfo = ({
         <li>
           <label>관람등급</label>
           <div>
-            <Age>{releaseInfo.certification}</Age>
+            <Age certification={releaseInfo.certification} />
           </div>
         </li>
       </DetailInfoRight>
