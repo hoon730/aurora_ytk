@@ -35,6 +35,7 @@ const App = () => {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
+
         <Header />
         <Outlet />
       </ThemeProvider>

@@ -6,7 +6,7 @@ import {
   getAllGeneres,
   getSearchDetail,
   getSearchReleaseDates,
-  getImage,
+  getMovieImages,
 } from "../api";
 import { makeImagePath, runtimeCalc } from "../utils";
 
@@ -212,7 +212,7 @@ const SearchItem = ({
 
   const { data: imageData, isLoading: imageLoading } = useQuery<ImageData>({
     queryKey: ["getImage", movieId],
-    queryFn: () => getImage(movieId),
+    queryFn: () => getMovieImages(movieId),
     enabled: !!movieId,
   });
 
