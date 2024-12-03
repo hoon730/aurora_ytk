@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import { GetMoviesResult } from "../api";
-import { makeImagePath } from "../utils";
-import Detail from "../pages/Detail";
+import { getMovieDetailInfo, GetMoviesResult, getMovieImages } from "../api";
+import { makeImagePath, getRunningTimeText } from "../utils";
 
-import { BsBorderBottom, BsChevronCompactLeft } from "react-icons/bs";
+import { BsChevronCompactLeft } from "react-icons/bs";
 import { BsChevronCompactRight } from "react-icons/bs";
-import { FaPlay } from "react-icons/fa";
-import { FaPlus } from "react-icons/fa6";
+import { MdMoreVert } from "react-icons/md";
 
 const Container = styled.div`
   margin-bottom: 50px;
@@ -53,7 +51,7 @@ const SliderContainer = styled.div`
   }
 
   &.tr {
-    height: 300px;
+    height: 420px;
   }
 `;
 
@@ -61,22 +59,15 @@ const Row = styled(motion.div)`
   position: absolute;
   top: 0;
   width: 100%;
-  /* display: grid;
-  grid-template-columns: repeat(5, 1fr); */
   display: flex;
   flex-wrap: nowrap;
   gap: 15px;
   padding: 0 40px;
+  transition: padding 0.3s ease;
   & > div {
     flex: 0 0 auto;
-    width: 20%; 
+    width: 15.98%;
     aspect-ratio: 16 / 9;
-  }
-
-  @media (max-width: 1024px) {
-    & > div {
-      width: 25%; /* 화면 작아질 때 4개 */
-    }
   }
 
   @media (max-width: 768px) {
@@ -85,12 +76,14 @@ const Row = styled(motion.div)`
     }
   }
 
+  &.active {
+    /* padding-left: 0; */
+  }
 `;
 
 const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
-  /* width: 20%; 
-  height: 144px; */
-  flex: 0 0 auto; 
+  height: 144px;
+  flex: 0 0 auto;
   aspect-ratio: 16 / 9;
   background: url(${(props) => props.$bgPhoto}) center/cover no-repeat;
   font-size: 22px;
@@ -107,16 +100,54 @@ const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
   }
 
   &.tr {
-    height: 300px;
+    height: 430px;
   }
+`;
+
+const MovieTitle = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+
+  &.no_logo {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 20%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0.7) 80%,
+    #000 100%
+  ),
+  url("your-image.jpg");
+background-blend-mode: overlay;
+  }
+`;
+
+const MovieLogo = styled.img`
+  width: 100%;
+  height: 40px;
+  object-fit: contain;
 `;
 
 const Info = styled(motion.div)`
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 5px;
-  opacity: 0;
+  background: rgba(0, 0, 0, 0.1);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  opacity: 1;
 `;
 
 const Additional = styled(motion.div)`
@@ -124,14 +155,15 @@ const Additional = styled(motion.div)`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   padding: 10px;
   background: #292828;
   color: #fff;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   opacity: 0;
-  z-index: 10; /* Box보다 앞서도록 설정 */
+  z-index: 10;
+  display: none;
 
   h4 {
     text-overflow: ellipsis;
@@ -142,33 +174,33 @@ const Additional = styled(motion.div)`
   }
 `;
 
-const Buttons = styled.div`
+const Description = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const Left = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Right = styled.div`
   display: flex;
   gap: 15px;
 `;
 const Button = styled.div`
-  width: 30%;
-  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
-  border-radius: 5px;
-  background: #4a4949;
   color: #fff;
 
-  &:last-child {
-    width: 30px;
-    border-radius: 50%;
-  }
-
   svg {
+    font-size: 20px;
   }
 `;
 
 const More = styled.div`
   display: flex;
-  flex-direction: column;
+  gap: 10px;
   /* justify-content: space-between;
   align-items: center; */
 `;
@@ -178,11 +210,17 @@ const Date = styled.div`
   font-size: 12px;
 `;
 
+const RunnngTime = styled.div`
+  color: #9a9a9a;
+  font-size: 12px;
+`;
+
 const Genres = styled.div`
   font-size: 12px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  margin-bottom: 10px;
 `;
 
 const PrevBtn = styled.div`
@@ -214,30 +252,31 @@ const rowVariants = {
 const boxVariants = {
   normal: { scale: 1 },
   hover: {
-    scale: 1.2,
+    scale: 1.235,
     y: -20,
     borderBottomLeftRadius: "0px",
     borderBottomRightRadius: "0px",
-    zIndex: 10, // Hover 상태에서 z-index 증가
+    zIndex: 10,
     transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
 
 const infoVariants = {
   hover: {
-    opacity: 0.7,
+    opacity: 0,
     transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
 
 const AddtionalVariants = {
   hover: {
+    display: "flex",
     opacity: 1,
     transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
 
-const offset = 5;
+const offset = 6;
 
 const Slider = ({
   category,
@@ -301,10 +340,51 @@ const Slider = ({
 
   const getGenreNames = (genreIds: number[]) => {
     return genreIds
+      .slice(0, 3)
       .map((id) => genreMap.get(id))
       .filter(Boolean)
       .join(" • ");
   };
+
+  const [movieDetails, setMovieDetails] = useState<Record<number, any>>({});
+
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      const details: Record<number, any> = {};
+      for (const movie of data.results) {
+        const detail = await getMovieDetailInfo(movie.id);
+        details[movie.id] = detail.koreanData.runtime;
+      }
+      setMovieDetails(details);
+    };
+
+    fetchMovieDetails();
+  }, [data]);
+
+  const getRuntime = (movieId: number) => {
+    return getRunningTimeText(movieDetails[movieId] || 0);
+  };
+
+  const [logos, setLogos] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    const fetchLogos = async () => {
+      const logoData: Record<number, string> = {};
+      for (const movie of data.results) {
+        const images = await getMovieImages(movie.id);
+        if (images.logos && images.logos.length > 0) {
+          logoData[movie.id] = images.logos[0].file_path; 
+        }
+      }
+      setLogos(logoData); 
+    };
+
+    fetchLogos();
+  }, [data]);
+
+  const makeLogoUrl = (filePath: string) =>
+    `https://image.tmdb.org/t/p/w500${filePath}`;
+  // console.log(getMovieImages(1241982).then((img) => img.logos[0].file_path));
 
   return (
     <Container>
@@ -323,6 +403,7 @@ const Slider = ({
             animate="visible"
             exit="exit"
             transition={{ type: "tween", duration: 0.7 }}
+            className={isClick ? "active" : ""}
           >
             {data?.results
               .slice(index * offset, index * offset + offset)
@@ -332,35 +413,44 @@ const Slider = ({
                   key={movie.id}
                   layoutId={`${category}_${movie.id}`}
                   variants={boxVariants}
-                  // $bgPhoto={
-                  //   category === "tr"
-                  //     ? makeImagePath(movie.poster_path)
-                  //     : makeImagePath(movie.backdrop_path || "", "w500")
-                  // }
-                  $bgPhoto={makeImagePath(movie.backdrop_path || "", "w500")}
+                  $bgPhoto={
+                    category === "tr"
+                      ? makeImagePath(movie.poster_path || "", "w500")
+                      : makeImagePath(movie.backdrop_path || "", "w500")
+                  }
                   className={category === "tr" ? "tr" : ""}
                   initial="normal"
                   whileHover="hover"
                 >
-                  <Info variants={infoVariants} />
+                  <Info variants={infoVariants}></Info>
+                  {category !== "tr" ? (
+                    logos[movie.id] ? (
+                      <MovieTitle>
+                        <MovieLogo
+                          src={makeLogoUrl(logos[movie.id])}
+                          alt={`${movie.title} Logo`}
+                        />
+                      </MovieTitle>
+                    ) : (
+                      <MovieTitle className="no_logo">{movie.title}</MovieTitle>
+                    )
+                  ) : null}
                   <Additional variants={AddtionalVariants}>
-                    {/* <MovieImg>
-                        <img src={makeImagePath(movie.backdrop_path|| "", "w500")} alt={movie.title} />
-                      </MovieImg> */}
                     <h4>{movie.title}</h4>
-                    <More>
-                      <Date>{movie.release_date.slice(0, 4)}</Date>
-                      <Genres>{getGenreNames(movie.genre_ids)}</Genres>
-                    </More>
-                    <Buttons>
-                      <Button>
-                        <FaPlay />
-                      </Button>
-                      <Button>예고편</Button>
-                      <Button>
-                        <FaPlus />
-                      </Button>
-                    </Buttons>
+                    <Description>
+                      <Left>
+                        <More>
+                          <Date>{movie.release_date.slice(0, 4)}</Date>
+                          <RunnngTime>{getRuntime(movie.id)}</RunnngTime>
+                        </More>
+                        <Genres>{getGenreNames(movie.genre_ids)}</Genres>
+                      </Left>
+                      <Right>
+                        <Button>
+                          <MdMoreVert />
+                        </Button>
+                      </Right>
+                    </Description>
                   </Additional>
                 </Box>
               ))}

@@ -12,3 +12,9 @@ const certificationMapping: Record<string, string> = {
 export const mapCertificationToAge = (certification: string) => {
   return certificationMapping[certification.replace(/[^A-Za-z]/g, "")] ?? "All";
 };
+
+export const getRunningTimeText = (runningTime: number) => {
+  const hours = Math.floor(runningTime / 60);
+  const minutes = runningTime % 60;
+  return `${hours ? `${hours}시간 ` : ""}${minutes ? `${minutes}분` : ""}`;
+};
