@@ -11,6 +11,10 @@ import { MdMoreVert } from "react-icons/md";
 
 const Container = styled.div`
   margin-bottom: 50px;
+
+  @media (max-width: 1400px) {
+    margin-bottom: 30px;
+  }
 `;
 
 const CategoryTitle = styled.h3`
@@ -23,6 +27,7 @@ const SliderContainer = styled.div`
   width: 100%;
   height: 144px;
   position: relative;
+  aspect-ratio: 16 / 9;
 
   .button {
     position: absolute;
@@ -46,12 +51,21 @@ const SliderContainer = styled.div`
     }
 
     @media (max-width: 768px) {
-      padding: 0 20px;
     }
   }
 
   &.tr {
     height: 420px;
+    aspect-ratio: 16 / 9;
+  }
+
+  @media (max-width: 1400px) {
+    height: 130px;
+  }
+
+  @media (max-width: 768px) {
+    aspect-ratio: 4 / 3;
+    height: 120px;
   }
 `;
 
@@ -62,48 +76,46 @@ const Row = styled(motion.div)`
   width: 100%;
   display: flex;
   flex-wrap: nowrap;
-  gap: 15px;
+  gap: 10px;
   padding: 0 40px;
   transition: padding 0.3s ease;
-  & > div {
-    flex: 0 0 auto;
-    width: 15.98%;
-    aspect-ratio: 16 / 9;
-  }
 
   & > div {
     flex: 0 0 auto;
-    width: 15.98%; /* 기본 6개 */
+    width: 16.5%; /* 기본 6개 배치 */
     aspect-ratio: 16 / 9;
   }
 
   @media (max-width: 1400px) {
     & > div {
-      width: 20%; /* 4개로 변경 */
+      width: 22%; /* 5개 배치 */
     }
   }
 
   @media (max-width: 1024px) {
     & > div {
-      width: 24.5%; /* 4개로 변경 */
+      width: 26%; /* 4개 배치 */
     }
   }
 
   @media (max-width: 768px) {
     & > div {
-      width: 32%; /* 3개로 변경 */
+      width: 33%; /* 3개 배치 */
     }
   }
 
   @media (max-width: 480px) {
     & > div {
-      width: 48%; /* 2개로 변경 */
+      width: 48%; /* 2개 배치 */
     }
   }
 `;
 
 const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
   /* height: 144px; */
+  /* 최소 크기 제한 */
+  min-width: 220px;
+  min-height: 123.75px;
   flex: 0 0 auto;
   aspect-ratio: 16 / 9;
   background: url(${(props) => props.$bgPhoto}) center/cover no-repeat;
@@ -112,6 +124,13 @@ const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
   box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   cursor: pointer;
+  aspect-ratio: 16 / 9;
+
+  @media (max-width: 768px) {
+    aspect-ratio: 4 / 3; /* 모바일 비율 */
+    min-width: 180px;
+    min-height: 100px;
+  }
 
   &:first-child {
     transform-origin: center left;
@@ -470,17 +489,17 @@ const Slider = ({
                   </Additional>
                 </Box>
               ))}
+            <PrevBtn
+              className={isClick ? "active button" : "button"}
+              onClick={handlePrevBtn}
+            >
+              <BsChevronCompactLeft />
+            </PrevBtn>
+            <NextBtn className="button" onClick={handleNextBtn}>
+              <BsChevronCompactRight />
+            </NextBtn>
           </Row>
         </AnimatePresence>
-        <PrevBtn
-          className={isClick ? "active button" : "button"}
-          onClick={handlePrevBtn}
-        >
-          <BsChevronCompactLeft />
-        </PrevBtn>
-        <NextBtn className="button" onClick={handleNextBtn}>
-          <BsChevronCompactRight />
-        </NextBtn>
       </SliderContainer>
     </Container>
   );
