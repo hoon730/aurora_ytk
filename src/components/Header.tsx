@@ -10,7 +10,7 @@ const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 80px;
+  padding: 0 40px;
   color: ${(props) => props.theme.white.lighter};
   font-size: 16px;
   position: fixed;
@@ -118,9 +118,6 @@ interface Form {
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
-  const homeMatch = useMatch("/");
-  const modalMatch = useMatch("/movies/*");
-  const tvMatch = useMatch("/tv");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
@@ -138,7 +135,7 @@ const Header = () => {
 
   const navVariants = {
     top: { background: "#053747" },
-    scroll: { background: "rgba(255, 255, 255, 1)" },
+    scroll: { background: "#052131" },
   };
 
   useEffect(() => {
