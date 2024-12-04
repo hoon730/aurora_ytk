@@ -19,6 +19,7 @@ const Container = styled.div`
   margin-top: 60px;
   padding-bottom: 150px;
   background: ${(props) => props.theme.black.darker};
+  overflow: hidden;
 `;
 
 const Loader = styled.div`
@@ -28,7 +29,7 @@ const Loader = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 40px;
-  color: ${(props) => props.theme.red};
+  color: ${(props) => props.theme.white.lighter};
 `;
 
 const Home = () => {
@@ -93,7 +94,7 @@ const Home = () => {
               data={nowPlayingData}
               categoryTitle="오로라 최신작"
               genres={genres || []}
-              />
+            />
           )}
         </>
       )}

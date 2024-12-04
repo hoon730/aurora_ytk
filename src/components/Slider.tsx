@@ -3,7 +3,7 @@ import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { getMovieDetailInfo, GetMoviesResult, getMovieImages } from "../api";
-import { makeImagePath, getRunningTimeText } from "../utils";
+import { makeImagePath, runtimeCalc } from "../utils";
 
 import { BsChevronCompactLeft } from "react-icons/bs";
 import { BsChevronCompactRight } from "react-icons/bs";
@@ -30,7 +30,7 @@ const SliderContainer = styled.div`
     width: 40px;
     height: 100%;
     transform: translateY(-50%);
-    z-index: 10;
+    z-index: 5;
     justify-content: center;
     align-items: center;
     font-size: 32px;
@@ -58,6 +58,7 @@ const SliderContainer = styled.div`
 const Row = styled(motion.div)`
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   display: flex;
   flex-wrap: nowrap;
@@ -70,14 +71,34 @@ const Row = styled(motion.div)`
     aspect-ratio: 16 / 9;
   }
 
-  @media (max-width: 768px) {
+  & > div {
+    flex: 0 0 auto;
+    width: 15.98%; /* 기본 6개 */
+    aspect-ratio: 16 / 9;
+  }
+
+  @media (max-width: 1400px) {
     & > div {
-      width: 33.33%; /* 3개로 조정 */
+      width: 20%; /* 4개로 변경 */
     }
   }
 
-  &.active {
-    /* padding-left: 0; */
+  @media (max-width: 1024px) {
+    & > div {
+      width: 24.5%; /* 4개로 변경 */
+    }
+  }
+
+  @media (max-width: 768px) {
+    & > div {
+      width: 32%; /* 3개로 변경 */
+    }
+  }
+
+  @media (max-width: 480px) {
+    & > div {
+      width: 48%; /* 2개로 변경 */
+    }
   }
 `;
 
@@ -124,14 +145,14 @@ const MovieTitle = styled.div`
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 20%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.7) 80%,
-    #000 100%
-  ),
-  url("your-image.jpg");
-background-blend-mode: overlay;
+        to bottom,
+        rgba(0, 0, 0, 0) 20%,
+        rgba(0, 0, 0, 0.4) 50%,
+        rgba(0, 0, 0, 0.7) 80%,
+        #000 100%
+      ),
+      url("your-image.jpg");
+    background-blend-mode: overlay;
   }
 `;
 
@@ -240,12 +261,15 @@ const NextBtn = styled.div`
 const rowVariants = {
   hidden: (direction: number) => ({
     x: direction > 0 ? window.innerWidth + 50 : -window.innerWidth - 50,
+    y: 0,
   }),
   visible: {
     x: 0,
+    y: 0,
   },
   exit: (direction: number) => ({
     x: direction > 0 ? -window.innerWidth - 50 : window.innerWidth + 50,
+    y: 0,
   }),
 };
 
@@ -289,27 +313,17 @@ const Slider = ({
   categoryTitle: string;
   genres: { id: number; name: string }[];
 }) => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const movieMatch: PathMatch<string> | null = useMatch("/movies/:movieId");
 
   const [index, setIndex] = useState(0);
   const [isClick, setIsClick] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState(0);
-  const [movieId, setMovieId] = useState("");
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
 
   const onBoxClick = (movieId: number) => {
-    if (isOpen) {
-      setIsOpen(false);
-      setMovieId("");
-    } else {
-      setIsOpen(true);
-      setMovieId(`${category}_${movieId}`);
-    }
-
     if (leaving) return;
     setDirection(0);
   };
@@ -362,7 +376,7 @@ const Slider = ({
   }, [data]);
 
   const getRuntime = (movieId: number) => {
-    return getRunningTimeText(movieDetails[movieId] || 0);
+    return runtimeCalc(movieDetails[movieId] || 0);
   };
 
   const [logos, setLogos] = useState<Record<number, string>>({});
@@ -373,10 +387,10 @@ const Slider = ({
       for (const movie of data.results) {
         const images = await getMovieImages(movie.id);
         if (images.logos && images.logos.length > 0) {
-          logoData[movie.id] = images.logos[0].file_path; 
+          logoData[movie.id] = images.logos[0].file_path;
         }
       }
-      setLogos(logoData); 
+      setLogos(logoData);
     };
 
     fetchLogos();
@@ -384,7 +398,6 @@ const Slider = ({
 
   const makeLogoUrl = (filePath: string) =>
     `https://image.tmdb.org/t/p/w500${filePath}`;
-  // console.log(getMovieImages(1241982).then((img) => img.logos[0].file_path));
 
   return (
     <Container>
@@ -409,7 +422,10 @@ const Slider = ({
               .slice(index * offset, index * offset + offset)
               .map((movie) => (
                 <Box
-                  onClick={() => onBoxClick(movie.id)}
+                  onClick={() => {
+                    navigate(`/detail/${movie.id}`);
+                    onBoxClick(movie.id);
+                  }}
                   key={movie.id}
                   layoutId={`${category}_${movie.id}`}
                   variants={boxVariants}

@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { MovieDetailData, RleaseInfo } from "../api";
 import Age from "./Age";
 
 const DetailInfoSection = styled.div<{ $isReview: boolean }>`
@@ -51,48 +50,55 @@ const DetailInfoRight = styled.div`
   }
 `;
 
-interface movieDataType {
-  englishData: MovieDetailData;
-  koreanData: MovieDetailData;
+interface SearchInfo {
+  certification: string | undefined;
+  logo: string | undefined;
+  title: string | undefined;
+  release_date: string | undefined;
+  genre:
+    | (
+        | {
+            id: number;
+            name: string;
+          }
+        | undefined
+      )[]
+    | undefined;
+  overview: string | undefined;
+  backdrop_path: string | undefined;
+  poster_path: string | undefined;
 }
 
 const DetatilInfo = ({
-  movieData,
-  title,
-  releaseInfo,
+  searchInfo,
+  runtime,
   isReview,
 }: {
-  movieData: movieDataType | undefined;
-  title: string;
-  releaseInfo: RleaseInfo;
+  searchInfo: SearchInfo;
+  runtime: string | undefined;
   isReview: boolean;
 }) => {
   const genres = useMemo(() => {
     return (
-      movieData?.koreanData?.genres?.map((genre) => genre.name).join(", ") ||
-      "장르 정보 없음"
+      searchInfo.genre?.map((item) => item?.name).join(", ") || "장르 정보 없음"
     );
-  }, [movieData]);
+  }, [searchInfo]);
 
   const overview = useMemo(() => {
-    return (
-      movieData?.koreanData?.overview ||
-      movieData?.englishData?.overview ||
-      "설명 없음"
-    );
-  }, [movieData]);
+    return searchInfo.overview || "설명 없음";
+  }, [searchInfo]);
 
   return (
     <DetailInfoSection $isReview={isReview}>
       <DetailInfoLeft>
-        <DetailInfoTitle>{title}</DetailInfoTitle>
+        <DetailInfoTitle>{searchInfo.title}</DetailInfoTitle>
         <p>{overview}</p>
       </DetailInfoLeft>
 
       <DetailInfoRight>
         <li>
           <label>공개일</label>
-          <div>{releaseInfo.release_date}</div>
+          <div>{searchInfo.release_date}</div>
         </li>
         <li>
           <label>장르</label>
@@ -101,8 +107,12 @@ const DetatilInfo = ({
         <li>
           <label>관람등급</label>
           <div>
-            <Age certification={releaseInfo.certification} />
+            <Age certification={searchInfo.certification} />
           </div>
+        </li>
+        <li>
+          <label>상영시간</label>
+          <div>{runtime}</div>
         </li>
       </DetailInfoRight>
     </DetailInfoSection>
