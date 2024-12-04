@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import {
-  getDramaMovies,
+  getComedyMovies,
   getFantasyMovies,
   getMovies,
   GetMoviesResult,
@@ -9,13 +9,15 @@ import {
   getThrillerMovies,
   getTodaysMovies,
   getTopRated,
+  getGenres,
 } from "../api";
-import Slider from "../components/Slider";
+import Slider from "../components/Slider copy";
 
 const Container = styled.div`
   width: 100%;
   height: 100%;
   margin-top: 60px;
+  padding-bottom: 150px;
   background: ${(props) => props.theme.black.darker};
 `;
 
@@ -26,7 +28,7 @@ const Loader = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 40px;
-  color: ${(props) => props.theme.red};
+  color: ${(props) => props.theme.white.lighter};
 `;
 
 const Home = () => {
@@ -60,10 +62,10 @@ const Home = () => {
       queryFn: getThrillerMovies,
     });
 
-  const { data: dramaData, isLoading: dramaLoading } =
+  const { data: comedyData, isLoading: comedyLoading } =
     useQuery<GetMoviesResult>({
-      queryKey: ["drama"],
-      queryFn: getDramaMovies,
+      queryKey: ["comedy"],
+      queryFn: getComedyMovies,
     });
 
   const { data: fantasyData, isLoading: fantasyLoading } =
@@ -71,6 +73,13 @@ const Home = () => {
       queryKey: ["fantasy"],
       queryFn: getFantasyMovies,
     });
+
+  const { data: genres, isLoading: genresLoading } = useQuery({
+    queryKey: ["genres"],
+    queryFn: getGenres,
+  });
+
+  console.log(fantasyData);
 
   return (
     <Container>
@@ -83,6 +92,7 @@ const Home = () => {
               category={"np"}
               data={nowPlayingData}
               categoryTitle="오로라 최신작"
+              genres={genres || []}
             />
           )}
         </>
@@ -96,6 +106,7 @@ const Home = () => {
               category={"tm"}
               data={todaysMoviesData}
               categoryTitle="오늘의 추천작"
+              genres={genres || []}
             />
           )}
         </>
@@ -110,6 +121,7 @@ const Home = () => {
               category={"tr"}
               data={topRatedData}
               categoryTitle="시청자들의 Pick"
+              genres={genres || []}
             />
           )}
         </>
@@ -120,7 +132,12 @@ const Home = () => {
       ) : (
         <>
           {popularData && (
-            <Slider category={"pd"} data={popularData} categoryTitle="인기작" />
+            <Slider
+              category={"pd"}
+              data={popularData}
+              categoryTitle="인기작"
+              genres={genres || []}
+            />
           )}
         </>
       )}
@@ -134,17 +151,23 @@ const Home = () => {
               category={"td"}
               data={thrillerData}
               categoryTitle="스릴러"
+              genres={genres || []}
             />
           )}
         </>
       )}
 
-      {dramaLoading ? (
+      {comedyLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          {dramaData && (
-            <Slider category={"dd"} data={dramaData} categoryTitle="드라마" />
+          {comedyData && (
+            <Slider
+              category={"cd"}
+              data={comedyData}
+              categoryTitle="코미디"
+              genres={genres || []}
+            />
           )}
         </>
       )}
@@ -154,7 +177,12 @@ const Home = () => {
       ) : (
         <>
           {fantasyData && (
-            <Slider category={"fd"} data={fantasyData} categoryTitle="판타지" />
+            <Slider
+              category={"fd"}
+              data={fantasyData}
+              categoryTitle="판타지"
+              genres={genres || []}
+            />
           )}
         </>
       )}
