@@ -82,7 +82,7 @@ const Row = styled(motion.div)`
 `;
 
 const Box = styled(motion.div)<{ $bgPhoto: string | undefined }>`
-  height: 144px;
+  /* height: 144px; */
   flex: 0 0 auto;
   aspect-ratio: 16 / 9;
   background: url(${(props) => props.$bgPhoto}) center/cover no-repeat;
