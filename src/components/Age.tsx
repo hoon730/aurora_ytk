@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { certificationInfo } from "../utils";
 
 const Wrapper = styled.span`
   width: 30px;
@@ -12,16 +13,12 @@ const Wrapper = styled.span`
   align-items: center;
 `;
 
-const Age = ({ certification }: { certification: string }) => {
-  const bgColor: Record<string, string> = {
-    All: "##00964b",
-    "12": "#eabc00",
-    "15": "#dc7317",
-    "19": "#d92c35",
-  };
+const Age = ({ certification }: { certification: string | undefined }) => {
   return (
-    <Wrapper style={{ background: `${bgColor[certification]}` }}>
-      {certification}
+    <Wrapper
+      style={{ background: `${certificationInfo(certification).color}` }}
+    >
+      {certificationInfo(certification).age}
     </Wrapper>
   );
 };

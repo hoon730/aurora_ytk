@@ -1,12 +1,20 @@
 const API_KEY = "0bc8bd2db453d7413d1c2844ec617b61";
 const BASE_PATH = "https://api.themoviedb.org/3";
 
+export interface Genres {
+  genres: {
+    id: number;
+    name: string;
+  }[];
+}
+
 export interface Movie {
   id: number;
   backdrop_path: string;
   genre_ids: number[];
   poster_path: string;
   title: string;
+  original_language: string;
   original_title: string;
   overview: string;
   vote_average: number;
@@ -48,14 +56,14 @@ export interface Obj {
   name: string;
 }
 
-export interface RleaseInfo {
-  certification: string;
-  release_date: string;
-}
-
 export interface ReleaseDate {
-  iso_3166_1: string;
-  release_dates: RleaseInfo[];
+  results: {
+    iso_3166_1: string;
+    release_dates: {
+      certification: string;
+      release_date: string;
+    }[];
+  }[];
 }
 
 export interface VideoResult {
@@ -69,6 +77,7 @@ export interface MovieDetailData {
   release_date: string;
   backdrop_path?: string;
   poster_path?: string;
+  runtime: number;
 }
 
 export const getMovies = async () => {
@@ -135,15 +144,36 @@ export const getGenres = async () => {
 
 export const searchContents = (keyword: string | null) => {
   return fetch(
-    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}`
+    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}&include_adult=false&language=ko-KR`
   ).then((response) => response.json());
 };
 
-export const searchGeneres = () => {
-  return fetch(`${BASE_PATH}/genre/movie/list?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
+export const getAllGeneres = () => {
+  return fetch(
+    `${BASE_PATH}/genre/movie/list?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
 };
+
+// runtime 찾아오는 데이터
+export const getDetail = (movieId: number) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
+};
+
+// 연령등급 찾아오는 데이터
+export const getSearchReleaseDates = (movieId: number) => {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}/release_dates?api_key=${API_KEY}`
+  ).then((response) => response.json());
+};
+
+// 로고 찾아오는 데이터
+// export const getImage = (movieId: number) => {
+//   return fetch(`${BASE_PATH}/movie/${movieId}/images?api_key=${API_KEY}`).then(
+//     (response) => response.json()
+//   );
+// };
 
 export const getReviews = (movieId: number) => {
   return fetch(`${BASE_PATH}/movie/${movieId}/reviews?api_key=${API_KEY}`).then(
@@ -178,8 +208,8 @@ export const getMovieImages = (movieId: number) => {
   ).then((response) => response.json());
 };
 
-export const getMovieReleaseDates = (movieId: number) => {
-  return fetch(
-    `${BASE_PATH}/movie/${movieId}/release_dates?&api_key=${API_KEY}`
-  ).then((response) => response.json());
-};
+// export const getMovieReleaseDates = (movieId: number) => {
+//   return fetch(
+//     `${BASE_PATH}/movie/${movieId}/release_dates?&api_key=${API_KEY}`
+//   ).then((response) => response.json());
+// };

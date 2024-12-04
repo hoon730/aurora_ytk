@@ -3,7 +3,7 @@ import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { getMovieDetailInfo, GetMoviesResult, getMovieImages } from "../api";
-import { makeImagePath, getRunningTimeText } from "../utils";
+import { makeImagePath, runtimeCalc } from "../utils";
 
 import { BsChevronCompactLeft } from "react-icons/bs";
 import { BsChevronCompactRight } from "react-icons/bs";
@@ -30,7 +30,7 @@ const SliderContainer = styled.div`
     width: 40px;
     height: 100%;
     transform: translateY(-50%);
-    z-index: 10;
+    z-index: 5;
     justify-content: center;
     align-items: center;
     font-size: 32px;
@@ -124,14 +124,14 @@ const MovieTitle = styled.div`
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 20%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.7) 80%,
-    #000 100%
-  ),
-  url("your-image.jpg");
-background-blend-mode: overlay;
+        to bottom,
+        rgba(0, 0, 0, 0) 20%,
+        rgba(0, 0, 0, 0.4) 50%,
+        rgba(0, 0, 0, 0.7) 80%,
+        #000 100%
+      ),
+      url("your-image.jpg");
+    background-blend-mode: overlay;
   }
 `;
 
@@ -289,26 +289,26 @@ const Slider = ({
   categoryTitle: string;
   genres: { id: number; name: string }[];
 }) => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const movieMatch: PathMatch<string> | null = useMatch("/movies/:movieId");
 
   const [index, setIndex] = useState(0);
   const [isClick, setIsClick] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState(0);
-  const [movieId, setMovieId] = useState("");
+  // const [movieId, setMovieId] = useState("");
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
 
   const onBoxClick = (movieId: number) => {
-    if (isOpen) {
-      setIsOpen(false);
-      setMovieId("");
-    } else {
-      setIsOpen(true);
-      setMovieId(`${category}_${movieId}`);
-    }
+    // if (isOpen) {
+    //   setIsOpen(false);
+    //   setMovieId("");
+    // } else {
+    //   setIsOpen(true);
+    //   setMovieId(`${category}_${movieId}`);
+    // }
 
     if (leaving) return;
     setDirection(0);
@@ -362,7 +362,7 @@ const Slider = ({
   }, [data]);
 
   const getRuntime = (movieId: number) => {
-    return getRunningTimeText(movieDetails[movieId] || 0);
+    return runtimeCalc(movieDetails[movieId] || 0);
   };
 
   const [logos, setLogos] = useState<Record<number, string>>({});
@@ -373,10 +373,10 @@ const Slider = ({
       for (const movie of data.results) {
         const images = await getMovieImages(movie.id);
         if (images.logos && images.logos.length > 0) {
-          logoData[movie.id] = images.logos[0].file_path; 
+          logoData[movie.id] = images.logos[0].file_path;
         }
       }
-      setLogos(logoData); 
+      setLogos(logoData);
     };
 
     fetchLogos();
@@ -409,7 +409,10 @@ const Slider = ({
               .slice(index * offset, index * offset + offset)
               .map((movie) => (
                 <Box
-                  onClick={() => onBoxClick(movie.id)}
+                  onClick={() => {
+                    navigate(`/detail/${movie.id}`);
+                    onBoxClick(movie.id);
+                  }}
                   key={movie.id}
                   layoutId={`${category}_${movie.id}`}
                   variants={boxVariants}

@@ -2,20 +2,13 @@ import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { PathMatch, useMatch, useNavigate } from "react-router-dom";
-import {
-  getMovieDetailInfo,
-  getMovieImages,
-  getMovieReleaseDates,
-  getVideos,
-  MovieDetailData,
-  ReleaseDate,
-  VideoResult,
-} from "../api";
+import { getVideos, VideoResult } from "../api";
 import YouTube from "react-youtube";
-import { makeImagePath, mapCertificationToAge } from "../utils";
+import { makeImagePath } from "../utils";
 import Review from "../components/Review";
 import DetatilInfo from "../components/DetatilInfo";
 import Age from "../components/Age";
+import { useMovieReleaseInfo } from "../hook/commonData";
 
 const Container = styled.main`
   width: 100%;
@@ -101,42 +94,18 @@ const TabButton = styled.span<{ $active: boolean }>`
   transition: all 0.3s;
 `;
 
-interface MovieImageData {
-  logos: { file_path: string }[];
-}
-
 const Detail = React.memo(() => {
   const [isReview, setIsReview] = useState(false);
   const [isLike, setIsLike] = useState(false);
   const navigate = useNavigate();
   const movieMatch: PathMatch<string> | null = useMatch("/detail/:movieId");
-  const movieId = movieMatch ? Number(movieMatch.params.movieId) : null;
+  const movieId = movieMatch ? Number(movieMatch.params.movieId) : undefined;
+  const { searchInfo, runtime } = useMovieReleaseInfo(movieId);
 
   // Query 요청
-  const { data: movieData } = useQuery<{
-    englishData: MovieDetailData;
-    koreanData: MovieDetailData;
-  }>({
-    queryKey: ["movieDetailData", movieId],
-    queryFn: () => getMovieDetailInfo(movieId!),
-    enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
-  });
-
   const { data: videoData } = useQuery<{ results: VideoResult[] }>({
     queryKey: ["getVideos", movieId],
     queryFn: () => getVideos(movieId!),
-    enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
-  });
-
-  const { data: movieImages } = useQuery<MovieImageData>({
-    queryKey: ["getMovieImages", movieId],
-    queryFn: () => getMovieImages(movieId!),
-    enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
-  });
-
-  const { data: movieReleaseDate } = useQuery<{ results: ReleaseDate[] }>({
-    queryKey: ["movieReleaseDates", movieId],
-    queryFn: () => getMovieReleaseDates(movieId!),
     enabled: !!movieId, // movieId가 존재할 때만 쿼리 실행
   });
 
@@ -144,28 +113,6 @@ const Detail = React.memo(() => {
   const videoIds = useMemo(() => {
     return videoData?.results?.map((video) => video.key) || [];
   }, [videoData]);
-
-  const releaseInfo = useMemo(() => {
-    const releaseDate = movieReleaseDate?.results.find(
-      (item) => item.iso_3166_1 === "US"
-    )?.release_dates?.[0];
-    return {
-      certification: releaseDate?.certification
-        ? mapCertificationToAge(releaseDate.certification)
-        : "All",
-      release_date: releaseDate?.release_date
-        ? new Date(releaseDate.release_date).toLocaleDateString()
-        : "출시일 정보 없음",
-    };
-  }, [movieReleaseDate]);
-
-  const title = useMemo(() => {
-    return (
-      movieData?.koreanData?.title ||
-      movieData?.englishData?.title ||
-      "제목 없음"
-    );
-  }, [movieData]);
 
   // movieMatch가 없는 경우 리다이렉트 처리
   if (!movieMatch) {
@@ -193,9 +140,7 @@ const Detail = React.memo(() => {
       ) : (
         <PosterImg
           src={makeImagePath(
-            movieData?.englishData?.backdrop_path ||
-              movieData?.englishData?.poster_path ||
-              ""
+            searchInfo?.backdrop_path || searchInfo?.poster_path || ""
           )}
           alt="Movie Poster"
         />
@@ -203,21 +148,21 @@ const Detail = React.memo(() => {
 
       <DetailDesc>
         <TopSection>
-          {movieImages && movieImages?.logos?.length > 0 ? (
+          {searchInfo?.logo ? (
             <MovieLogo
               style={{
                 backgroundImage: `url(${makeImagePath(
-                  movieImages?.logos?.[0]?.file_path || ""
+                  searchInfo?.logo || ""
                 )})`,
               }}
             />
           ) : (
-            <MovieTitle>{title}</MovieTitle>
+            <MovieTitle>{searchInfo.title}</MovieTitle>
           )}
 
           <LikeLine>
-            <p>{releaseInfo.release_date}</p>
-            <Age certification={releaseInfo.certification} />
+            <p>{searchInfo.release_date}</p>
+            <Age certification={searchInfo.certification} />
             <LikeButton
               $isLike={isLike}
               onClick={() => setIsLike((prev) => !prev)}
@@ -248,9 +193,8 @@ const Detail = React.memo(() => {
           {movieId && (
             <div>
               <DetatilInfo
-                movieData={movieData}
-                title={title}
-                releaseInfo={releaseInfo}
+                searchInfo={searchInfo}
+                runtime={runtime}
                 isReview={isReview}
               />
               <Review movieId={movieId} isReview={isReview} />
