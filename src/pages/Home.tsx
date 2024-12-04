@@ -11,7 +11,7 @@ import {
   getTopRated,
   getGenres,
 } from "../api";
-import Slider from "../components/Slider copy";
+import Slider from "../components/Slider";
 
 const Container = styled.div`
   width: 100%;
