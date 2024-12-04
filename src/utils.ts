@@ -31,3 +31,22 @@ export const formatDate = (date: Date) => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const certificationInfo = (text: string | undefined) => {
+  switch (text) {
+    case "12":
+    case "PG":
+      return { age: "12", color: "#7EC627" };
+    case "15":
+    case "15세 이상 관람가":
+    case "PG-13":
+      return { age: "15", color: "#E9B239" };
+    case "19":
+    case "18":
+    case "R":
+    case "청소년 관람불가":
+      return { age: "19", color: "#ED4030" };
+    default:
+      return { age: "ALL", color: "#48C1A5" };
+  }
+};

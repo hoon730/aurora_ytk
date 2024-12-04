@@ -56,14 +56,14 @@ export interface Obj {
   name: string;
 }
 
-export interface RleaseInfo {
-  certification: string;
-  release_date: string;
-}
-
 export interface ReleaseDate {
-  iso_3166_1: string;
-  release_dates: RleaseInfo[];
+  results: {
+    iso_3166_1: string;
+    release_dates: {
+      certification: string;
+      release_date: string;
+    }[];
+  }[];
 }
 
 export interface VideoResult {
@@ -77,6 +77,7 @@ export interface MovieDetailData {
   release_date: string;
   backdrop_path?: string;
   poster_path?: string;
+  runtime: number;
 }
 
 export const getMovies = () => {
@@ -148,7 +149,7 @@ export const getAllGeneres = () => {
 };
 
 // runtime 찾아오는 데이터
-export const getSearchDetail = (movieId: number) => {
+export const getDetail = (movieId: number) => {
   return fetch(
     `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko`
   ).then((response) => response.json());
