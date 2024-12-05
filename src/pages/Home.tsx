@@ -11,7 +11,9 @@ import {
   getTopRated,
   getGenres,
 } from "../api";
-import Slider from "../components/Slider copy";
+import Slider from "../components/Slider";
+import MainBanner from "../components/mainBanner/MainBanner";
+
 
 const Container = styled.div`
   width: 100%;
@@ -19,6 +21,7 @@ const Container = styled.div`
   margin-top: 60px;
   padding-bottom: 150px;
   background: ${(props) => props.theme.black.darker};
+  overflow: hidden;
 `;
 
 const Loader = styled.div`
@@ -32,6 +35,15 @@ const Loader = styled.div`
 `;
 
 const Home = () => {
+  const slides: string[] = [
+    "./assets/images/popular/1.png",
+    "./assets/images/popular/2.png",
+    "./assets/images/popular/3.png",
+    "./assets/images/popular/4.png",
+    "./assets/images/popular/5.png",
+    "./assets/images/popular/6.png",
+  ];
+
   const { data: nowPlayingData, isLoading: nowPlayingLoaing } =
     useQuery<GetMoviesResult>({
       queryKey: ["nowPlaying"],
@@ -81,6 +93,7 @@ const Home = () => {
 
   return (
     <Container>
+      <MainBanner slides={slides} />
       {nowPlayingLoaing ? (
         <Loader>Loading...</Loader>
       ) : (

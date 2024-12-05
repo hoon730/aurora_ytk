@@ -1,8 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import theme from "./theme";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import TopBtn from "./components/TopBtn";
+
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -32,15 +34,25 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+export const SectionContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5.6vw;
+  text-align: center;
+`;
+
+
 const App = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-
         <Header />
         <Outlet />
         <Footer />
+        <TopBtn />
+
       </ThemeProvider>
     </>
   );
