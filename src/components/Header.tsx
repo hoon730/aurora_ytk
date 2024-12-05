@@ -7,10 +7,10 @@ import UserBox from "./UserBox";
 import MobileHeader from "./MobileHeader";
 import HeaderSearch from "./HeaderSearch";
 
-const Nav = styled(motion.nav)`
+const Nav = styled(motion.nav)<{ $isPre: boolean }>`
   width: 100%;
   height: 60px;
-  display: flex;
+  display: ${({ $isPre }) => ($isPre ? "none" : "flex")};
   justify-content: space-between;
   align-items: center;
   padding: 0 40px;
@@ -60,6 +60,7 @@ const Right = styled(motion.div)`
 
 const SearchAndProfile = styled.div`
   display: flex;
+  align-items: center;
   gap: 50px;
 
   @media screen and (max-width: 1024px) {
@@ -67,9 +68,20 @@ const SearchAndProfile = styled.div`
   }
 `;
 
+const Logout = styled.span`
+  transition: opacity 0.3s;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
 const Header = () => {
   const matchHome = useMatch("/");
   const [isHome, setIsHome] = useState(matchHome ? true : false);
+  const matchPre = useMatch("/pre-loading");
+  const matchLogin = useMatch("/login");
+  const [isPre, setIsPre] = useState(matchPre || matchLogin ? true : false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const navAnimation = useAnimation();
@@ -79,6 +91,10 @@ const Header = () => {
   useEffect(() => {
     setIsHome(matchHome ? true : false);
   }, [matchHome]);
+
+  useEffect(() => {
+    setIsPre(matchPre || matchLogin ? true : false);
+  }, [matchPre, matchLogin]);
 
   const goToMain = () => {
     navigation("/");
@@ -113,13 +129,19 @@ const Header = () => {
 
   return (
     <>
-      <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
+      <Nav
+        $isPre={isPre}
+        variants={navVariants}
+        animate={navAnimation}
+        initial={"top"}
+      >
         <BackButton $isHome={isHome} onClick={goBack}></BackButton>
         <Logo $openSearch={openSearch} src="/img/logo.png" onClick={goToMain} />
         <Right variants={navVariants} animate={navAnimation}>
           <Menu openMenu={openMenu} />
           <SearchAndProfile>
             <HeaderSearch openSearch={openSearch} />
+            <Logout onClick={() => navigation("/login")}>로그아웃</Logout>
             <UserBox position="top" />
           </SearchAndProfile>
         </Right>

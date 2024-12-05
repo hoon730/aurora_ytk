@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Container = styled.main`
@@ -143,11 +144,14 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [next, setNext] = useState(false);
 
+  const navigation = useNavigate();
+
   const onEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
       setNext(true);
     }
+    if (next) navigation("/");
   };
 
   return (
@@ -196,9 +200,6 @@ const Login = () => {
                 </Label>
               </InputBox>
             )}
-            {/* 언니 이 과자 맛있다 나도 다음에 사먹어야겠어 알려줘서 고마워 */}
-            {/* 이거 안지우고 깃 올리면 웃기겠다 풉키풉키 */}
-            {/* 괴도예지 왔다감ㅎㅎ */}
             <Button type="submit">{next ? "로그인" : "다음"}</Button>
           </Form>
           <CopyrightBox>
