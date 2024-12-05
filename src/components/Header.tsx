@@ -1,8 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useMatch } from "react-router-dom";
 import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import Menu from "./Menu";
+import { AiFillHome } from "react-icons/ai";
+import { IoSearch, IoMenu } from "react-icons/io5";
+import UserBox from "./UserBox";
 
 const Nav = styled(motion.nav)`
   width: 100%;
@@ -16,48 +21,62 @@ const Nav = styled(motion.nav)`
   position: fixed;
   top: 0;
   z-index: 10;
+  @media screen and (max-width: 780px) {
+    padding: 0 20px;
+  }
 `;
 
-const Left = styled.div`
-  display: flex;
-  gap: 120px;
-`;
-const Right = styled.div`
-  display: flex;
-  gap: 60px;
+const BackButton = styled.span<{ $isHome: boolean }>`
+  width: 32px;
+  height: 32px;
+  background: url("/img/left_arrow.png") center/cover no-repeat;
+  cursor: pointer;
+  display: none;
+  @media screen and (max-width: 780px) {
+    display: ${({ $isHome }) => ($isHome ? "none" : "block")};
+  }
 `;
 
-const Logo = styled(motion.img)`
+const Logo = styled.img`
   width: 70px;
   height: 33px;
-  fill: ${(props) => props.theme.red};
+  z-index: 10;
   cursor: pointer;
-  path {
-    stroke-width: 10px;
-    stroke: ${(props) => props.theme.white.darker};
+  @media screen and (max-width: 780px) {
+    //margin: 0 auto;
   }
 `;
 
-const Items = styled.ul`
+const Right = styled(motion.div)`
+  width: 90%;
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  background: ${({ theme }) => theme.black.darker};
+  @media screen and (max-width: 1024px) {
+    width: 85%;
+  }
+  @media screen and (max-width: 780px) {
+    width: fit-content;
+  }
+`;
+
+const SearchAndProfile = styled.div`
+  display: flex;
   gap: 50px;
-`;
 
-const Item = styled.li`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  transition: opacity 0.3s;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.7;
+  @media screen and (max-width: 1024px) {
+    gap: 30px;
+  }
+  @media screen and (max-width: 780px) {
+    /* height: fit-content;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 50px; */
   }
 `;
 
-const Search = styled.form`
-  display: flex;
+const Search = styled.form<{ $openSearch: boolean }>`
+  display: ${($openSearch) => ($openSearch ? "flex" : "none")};
   align-items: center;
   gap: 10px;
   position: relative;
@@ -81,47 +100,65 @@ const Input = styled(motion.input)`
   &:focus {
     outline: none;
   }
+  @media screen and (max-width: 1024px) {
+    width: 150px;
+  }
 `;
 
-const UserBox = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
-`;
-
-const UserImg = styled.img`
+const MobileHeader = styled.div`
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 60px;
+  padding: 0 20px;
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+  background: #000;
 `;
 
-const logoVariants = {
-  normal: { fillOpacity: 1 },
-  active: {
-    fillOpacity: [0, 1, 0],
-    transition: {
-      repeat: Infinity,
-    },
-  },
-};
+const Icons = styled.ul`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  li {
+    cursor: pointer;
+    svg {
+      fill: #fff;
+      stroke: #fff;
+      width: 30px;
+      height: 30px;
+    }
+  }
+`;
 
 interface Form {
   keyword: string;
 }
 
 const Header = () => {
+  const matchHome = useMatch("/");
+  const [isHome, setIsHome] = useState(matchHome ? true : false);
+  const [openSearch, setOpenSearch] = useState(false);
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
-  const main = useNavigate();
+  const navigation = useNavigate();
+
+  useEffect(() => {
+    setIsHome(matchHome ? true : false);
+  }, [matchHome]);
 
   const goToMain = () => {
-    main("/");
+    navigation("/");
   };
 
-  const { register, handleSubmit, setValue, getValues } = useForm<Form>();
+  const goBack = () => {
+    window.history.back();
+  };
+
+  const { register, handleSubmit, setValue } = useForm<Form>();
   const onValid = (data: Form) => {
-    main(`/search?keyword=${data.keyword}`);
+    navigation(`/search?keyword=${data.keyword}`);
     setValue("keyword", "");
   };
 
@@ -141,55 +178,48 @@ const Header = () => {
   }, [scrollY]);
 
   return (
-    <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
-      <Left>
-        <Logo
-          src="/img/logo.png"
-          onClick={goToMain}
-          variants={logoVariants}
-          initial="normal"
-          whileHover="active"
-          width="1024"
-          height="276.742"
-        />
-        <Items>
-          <Item>
-            <Link to={"/"}>홈</Link>
-          </Item>
-          <Item>
-            <Link to={"/tv"}>영화</Link>
-          </Item>
-          <Item>
-            <Link to={"/"}>시리즈</Link>
-          </Item>
-          <Item>
-            <Link to={"/"}>오지지널</Link>
-          </Item>
-          <Item>
-            <Link to={"/"}>관심콘텐츠</Link>
-          </Item>
-        </Items>
-      </Left>
-      <Right>
-        <Search onSubmit={handleSubmit(onValid)}>
-          <Input
-            {...register("keyword", { required: true, minLength: 2 })}
-            type="text"
-            placeholder="Search for MOVIE"
-          />
-          <motion.svg
-            onClick={handleSubmit(onValid)}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-          >
-            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-          </motion.svg>
-        </Search>
-        <UserBox>
-          <UserImg src="/img/profile.jpg" />
-        </UserBox>
-      </Right>
-    </Nav>
+    <>
+      <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
+        <BackButton $isHome={isHome} onClick={goBack}></BackButton>
+        <Logo src="/img/logo.png" onClick={goToMain} />
+        <Right variants={navVariants} animate={navAnimation}>
+          <Menu />
+          <SearchAndProfile>
+            <Search $openSearch={openSearch} onSubmit={handleSubmit(onValid)}>
+              <Input
+                {...register("keyword", { required: true, minLength: 2 })}
+                type="text"
+                placeholder="Search for MOVIE"
+              />
+              <motion.svg
+                onClick={handleSubmit(onValid)}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+              >
+                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+              </motion.svg>
+            </Search>
+            <UserBox position="top" />
+          </SearchAndProfile>
+        </Right>
+      </Nav>
+      <MobileHeader>
+        <Icons>
+          <li onClick={() => navigation("/")}>
+            <AiFillHome />
+          </li>
+          <li>
+            <IoMenu />
+          </li>
+          <li onClick={() => setOpenSearch((prev) => !prev)}>
+            <IoSearch />
+          </li>
+          <li>
+            <UserBox position="bottom" />
+          </li>
+        </Icons>
+      </MobileHeader>
+    </>
   );
 };
 
