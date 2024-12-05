@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-const Items = styled.ul`
+const Items = styled.ul<{ $openMenu: boolean }>`
   display: flex;
   align-items: center;
   gap: 50px;
@@ -9,11 +9,19 @@ const Items = styled.ul`
     gap: 20px;
   }
   @media screen and (max-width: 780px) {
-    /* padding-left: 5px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 30px; */
-    display: none;
+    display: ${({ $openMenu }) => ($openMenu ? "flex" : "none")};
+    width: 100%;
+    height: 60px;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    padding: 0 20px;
+    justify-content: space-between;
+    background: ${({ theme }) => theme.aqua.aqua2};
+    z-index: 10;
+  }
+  @media screen and (max-width: 450px) {
+    gap: 20px;
   }
 `;
 
@@ -29,9 +37,9 @@ const Item = styled.li`
   }
 `;
 
-const Menu = () => {
+const Menu = ({ openMenu }: { openMenu: boolean }) => {
   return (
-    <Items>
+    <Items $openMenu={openMenu}>
       <Item>
         <Link to={"/"}>홈</Link>
       </Item>
