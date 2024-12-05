@@ -12,6 +12,8 @@ import {
   getGenres,
 } from "../api";
 import Slider from "../components/Slider copy";
+import MainBanner from "../components/mainBanner/MainBanner";
+
 
 const Container = styled.div`
   width: 100%;
@@ -32,6 +34,15 @@ const Loader = styled.div`
 `;
 
 const Home = () => {
+  const slides: string[] = [
+    "./assets/images/popular/1.png",
+    "./assets/images/popular/2.png",
+    "./assets/images/popular/3.png",
+    "./assets/images/popular/4.png",
+    "./assets/images/popular/5.png",
+    "./assets/images/popular/6.png",
+  ];
+
   const { data: nowPlayingData, isLoading: nowPlayingLoaing } =
     useQuery<GetMoviesResult>({
       queryKey: ["nowPlaying"],
@@ -83,6 +94,7 @@ const Home = () => {
 
   return (
     <Container>
+      <MainBanner slides={slides} />
       {nowPlayingLoaing ? (
         <Loader>Loading...</Loader>
       ) : (
