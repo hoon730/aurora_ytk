@@ -12,7 +12,6 @@ import {
   getGenres,
 } from "../api";
 import Slider from "../components/Slider copy";
-import Header from "../components/Header";
 import MainBanner from "../components/mainBanner/MainBanner";
 
 const Container = styled.div`
@@ -93,7 +92,6 @@ const Home = () => {
 
   return (
     <Container>
-      <Header />
       <MainBanner slides={slides} />
       {nowPlayingLoaing ? (
         <Loader>Loading...</Loader>

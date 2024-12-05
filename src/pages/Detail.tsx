@@ -9,7 +9,6 @@ import Review from "../components/Review";
 import DetatilInfo from "../components/DetatilInfo";
 import Age from "../components/Age";
 import { useMovieReleaseInfo } from "../hook/commonData";
-import Header from "../components/Header";
 
 const Container = styled.main`
   width: 100%;
@@ -123,7 +122,6 @@ const Detail = React.memo(() => {
 
   return (
     <Container>
-      <Header/>
       {videoIds.length > 0 ? (
         <YouTube
           videoId={videoIds[0]}

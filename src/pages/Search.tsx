@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { GetMoviesResult, searchContents, getAllGeneres, Genres } from "../api";
 import SearchItem from "../components/SearchItem";
 import { formatDate } from "../utils";
-import Header from "../components/Header";
 
 const Container = styled.main`
   width: 100%;
@@ -26,7 +25,7 @@ const Inner = styled.div`
   flex-direction: column;
 `;
 
-const SearchHeader = styled.div`
+const Header = styled.div`
   width: 100%;
   display: flex;
   align-items: flex-end;
@@ -335,15 +334,13 @@ const Search = () => {
   }, [filters]);
 
   return (
-    <>
-      <Header />
       <Container>
         <Inner>
           {searchResultData.length === 0 ? (
             <NoResult>"{keyword}"의 검색결과가 없습니다.</NoResult>
           ) : (
             <>
-              <SearchHeader>
+              <Header>
                 <Keyword>{keyword}</Keyword>
                 <OptionArea>
                   <Option onClick={() => menuOpenFun("recommend")}>
@@ -466,7 +463,7 @@ const Search = () => {
                     &#x21BA; 리셋하기
                   </OptionReset>
                 </OptionArea>
-              </SearchHeader>
+              </Header>
               <MovieItemArea>
                 {applyFilters(filterKey).map((data) => (
                   <SearchItem
@@ -488,7 +485,6 @@ const Search = () => {
           )}
         </Inner>
       </Container>
-    </>
   );
 };
 

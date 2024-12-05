@@ -28,7 +28,6 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 400;
     font-style: normal;
     }
-    /* font-family: "Source Sans 3", serif; */
   }
 `;
 
@@ -45,6 +44,7 @@ const App = () => {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
+        <Header />
         <Outlet />
         <Footer />
         <TopBtn />

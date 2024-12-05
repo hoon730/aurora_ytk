@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Header from "../components/Header";
 
 const Container = styled.main`
   width: 100%;
@@ -153,7 +152,6 @@ const Login = () => {
 
   return (
     <Container>
-      <Header/>
       <Wrapper>
         <Logo src="/img/logo.png" width="1024" height="276.742" />
         <LonginBox>
