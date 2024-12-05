@@ -11,7 +11,7 @@ import {
   getTopRated,
   getGenres,
 } from "../api";
-import Slider from "../components/Slider copy";
+import Slider from "../components/Slider";
 import MainBanner from "../components/mainBanner/MainBanner";
 
 
@@ -21,6 +21,7 @@ const Container = styled.div`
   margin-top: 60px;
   padding-bottom: 150px;
   background: ${(props) => props.theme.black.darker};
+  overflow: hidden;
 `;
 
 const Loader = styled.div`
