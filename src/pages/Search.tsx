@@ -334,157 +334,152 @@ const Search = () => {
   }, [filters]);
 
   return (
-      <Container>
-        <Inner>
-          {searchResultData.length === 0 ? (
-            <NoResult>"{keyword}"의 검색결과가 없습니다.</NoResult>
-          ) : (
-            <>
-              <Header>
-                <Keyword>{keyword}</Keyword>
-                <OptionArea>
-                  <Option onClick={() => menuOpenFun("recommend")}>
-                    <OptionText
-                      className={
-                        filters.sort.oldest || filters.sort.newest
-                          ? "active"
-                          : ""
-                      }
-                    >
-                      {filters.sort.recommend
-                        ? "추천순"
-                        : filters.sort.oldest
-                        ? "오래된순"
-                        : "최신순"}
-                      <span>▼</span>
-                    </OptionText>
-                    <OptionMenuArea>
-                      <OptionMenu
-                        className={menuOpen.recommend ? "active" : ""}
-                      >
-                        <OptionItem
-                          onClick={() =>
-                            setFilters({
-                              ...filters,
-                              sort: {
-                                recommend: true,
-                                newest: false,
-                                oldest: false,
-                              },
-                            })
-                          }
-                        >
-                          추천순
-                        </OptionItem>
-                        <OptionItem
-                          className={filters.sort.newest ? "active" : ""}
-                          onClick={() =>
-                            setFilters({
-                              ...filters,
-                              sort: {
-                                recommend: false,
-                                newest: true,
-                                oldest: false,
-                              },
-                            })
-                          }
-                        >
-                          최신순
-                        </OptionItem>
-                        <OptionItem
-                          className={filters.sort.oldest ? "active" : ""}
-                          onClick={() =>
-                            setFilters({
-                              ...filters,
-                              sort: {
-                                recommend: false,
-                                newest: false,
-                                oldest: true,
-                              },
-                            })
-                          }
-                        >
-                          오래된순
-                        </OptionItem>
-                      </OptionMenu>
-                    </OptionMenuArea>
-                  </Option>
-                  <Option onClick={() => menuOpenFun("genre")}>
-                    <OptionText className={filters.genre.clear ? "" : "active"}>
-                      <OptionGenreText>
-                        {filters.genre.clear || filterKey.length === 0
-                          ? "장르"
-                          : filterKey.length === 1
-                          ? genreMenu.find(
-                              (genre) => genre?.id === filterKey[0]
-                            )?.name
-                          : filterKey.map(
-                              (key, idx) =>
-                                `${
-                                  genreMenu.find(
-                                    (genre) =>
-                                      genre !== undefined && genre.id === key
-                                  )?.name
-                                }
-                                ${idx === filterKey.length - 1 ? "" : ", "}`
-                            )}
-                      </OptionGenreText>
-                      <span>▼</span>
-                    </OptionText>
-                    <OptionMenuArea>
-                      <OptionMenu className={menuOpen.genre ? "active" : ""}>
-                        {genreMenu.map((genre, idx) => (
-                          <OptionItem
-                            className={
-                              filters.genre.clear === false &&
-                              genre !== undefined &&
-                              filters.genre[genre.id]
-                                ? "active"
-                                : ""
-                            }
-                            key={idx}
-                            onClick={() =>
-                              filterGenres(genre !== undefined ? genre.id : 0)
-                            }
-                          >
-                            {genre?.name}
-                          </OptionItem>
-                        ))}
-                      </OptionMenu>
-                    </OptionMenuArea>
-                  </Option>
-                  <OptionReset
-                    onClick={() => {
-                      setMenuOpen({ recommend: false, genre: false });
-                      setFilters(initialFilter);
-                      setFilterKey([]);
-                    }}
-                  >
-                    &#x21BA; 리셋하기
-                  </OptionReset>
-                </OptionArea>
-              </Header>
-              <MovieItemArea>
-                {applyFilters(filterKey).map((data) => (
-                  <SearchItem
-                    key={data.id}
-                    movieId={data.id}
-                    title={data.title}
-                    genres={data.genre_ids}
-                    image={
-                      data.backdrop_path ? data.backdrop_path : data.poster_path
+    <Container>
+      <Inner>
+        {searchResultData.length === 0 ? (
+          <NoResult>"{keyword}"의 검색결과가 없습니다.</NoResult>
+        ) : (
+          <>
+            <Header>
+              <Keyword>{keyword}</Keyword>
+              <OptionArea>
+                <Option onClick={() => menuOpenFun("recommend")}>
+                  <OptionText
+                    className={
+                      filters.sort.oldest || filters.sort.newest ? "active" : ""
                     }
-                    releaseYear={data.release_date}
-                  />
-                ))}
-              </MovieItemArea>
-              {applyFilters(filterKey).length === 0 ? (
-                <NoResult>결과가 없습니다.</NoResult>
-              ) : null}
-            </>
-          )}
-        </Inner>
-      </Container>
+                  >
+                    {filters.sort.recommend
+                      ? "추천순"
+                      : filters.sort.oldest
+                      ? "오래된순"
+                      : "최신순"}
+                    <span>▼</span>
+                  </OptionText>
+                  <OptionMenuArea>
+                    <OptionMenu className={menuOpen.recommend ? "active" : ""}>
+                      <OptionItem
+                        onClick={() =>
+                          setFilters({
+                            ...filters,
+                            sort: {
+                              recommend: true,
+                              newest: false,
+                              oldest: false,
+                            },
+                          })
+                        }
+                      >
+                        추천순
+                      </OptionItem>
+                      <OptionItem
+                        className={filters.sort.newest ? "active" : ""}
+                        onClick={() =>
+                          setFilters({
+                            ...filters,
+                            sort: {
+                              recommend: false,
+                              newest: true,
+                              oldest: false,
+                            },
+                          })
+                        }
+                      >
+                        최신순
+                      </OptionItem>
+                      <OptionItem
+                        className={filters.sort.oldest ? "active" : ""}
+                        onClick={() =>
+                          setFilters({
+                            ...filters,
+                            sort: {
+                              recommend: false,
+                              newest: false,
+                              oldest: true,
+                            },
+                          })
+                        }
+                      >
+                        오래된순
+                      </OptionItem>
+                    </OptionMenu>
+                  </OptionMenuArea>
+                </Option>
+                <Option onClick={() => menuOpenFun("genre")}>
+                  <OptionText className={filters.genre.clear ? "" : "active"}>
+                    <OptionGenreText>
+                      {filters.genre.clear || filterKey.length === 0
+                        ? "장르"
+                        : filterKey.length === 1
+                        ? genreMenu.find((genre) => genre?.id === filterKey[0])
+                            ?.name
+                        : filterKey.map(
+                            (key, idx) =>
+                              `${
+                                genreMenu.find(
+                                  (genre) =>
+                                    genre !== undefined && genre.id === key
+                                )?.name
+                              }
+                              ${idx === filterKey.length - 1 ? "" : ", "}`
+                          )}
+                    </OptionGenreText>
+                    <span>▼</span>
+                  </OptionText>
+                  <OptionMenuArea>
+                    <OptionMenu className={menuOpen.genre ? "active" : ""}>
+                      {genreMenu.map((genre, idx) => (
+                        <OptionItem
+                          className={
+                            filters.genre.clear === false &&
+                            genre !== undefined &&
+                            filters.genre[genre.id]
+                              ? "active"
+                              : ""
+                          }
+                          key={idx}
+                          onClick={() =>
+                            filterGenres(genre !== undefined ? genre.id : 0)
+                          }
+                        >
+                          {genre?.name}
+                        </OptionItem>
+                      ))}
+                    </OptionMenu>
+                  </OptionMenuArea>
+                </Option>
+                <OptionReset
+                  onClick={() => {
+                    setMenuOpen({ recommend: false, genre: false });
+                    setFilters(initialFilter);
+                    setFilterKey([]);
+                  }}
+                >
+                  &#x21BA; 리셋하기
+                </OptionReset>
+              </OptionArea>
+            </Header>
+            <MovieItemArea>
+              {applyFilters(filterKey).map((data) => (
+                <SearchItem
+                  key={data.id}
+                  movieId={data.id}
+                  title={data.title}
+                  genres={data.genre_ids}
+                  image={
+                    data.backdrop_path ? data.backdrop_path : data.poster_path
+                  }
+                  releaseYear={data.release_date}
+                />
+              ))}
+            </MovieItemArea>
+            {applyFilters(filterKey).length === 0 ? (
+              <NoResult>결과가 없습니다.</NoResult>
+            ) : null}
+          </>
+        )}
+      </Inner>
+    </Container>
   );
 };
 

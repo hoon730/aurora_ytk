@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import TopBtn from "./components/TopBtn";
 
+
 const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
@@ -28,6 +29,7 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 400;
     font-style: normal;
     }
+    /* font-family: "Source Sans 3", serif; */
   }
 `;
 
@@ -39,6 +41,7 @@ export const SectionContainer = styled.section`
   text-align: center;
 `;
 
+
 const App = () => {
   return (
     <>
@@ -48,6 +51,7 @@ const App = () => {
         <Outlet />
         <Footer />
         <TopBtn />
+
       </ThemeProvider>
     </>
   );

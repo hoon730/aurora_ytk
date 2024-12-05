@@ -14,6 +14,7 @@ import {
 import Slider from "../components/Slider copy";
 import MainBanner from "../components/mainBanner/MainBanner";
 
+
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -41,6 +42,7 @@ const Home = () => {
     "./assets/images/popular/5.png",
     "./assets/images/popular/6.png",
   ];
+
   const { data: nowPlayingData, isLoading: nowPlayingLoaing } =
     useQuery<GetMoviesResult>({
       queryKey: ["nowPlaying"],
