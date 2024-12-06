@@ -1,7 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import theme from "./theme";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
+import TopBtn from "./components/TopBtn";
+
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -27,8 +30,18 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     }
     /* font-family: "Source Sans 3", serif; */
+    background: ${(props) => props.theme.black.darker};;
   }
 `;
+
+export const SectionContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5.6vw;
+  text-align: center;
+`;
+
 
 const App = () => {
   return (
@@ -37,6 +50,8 @@ const App = () => {
         <GlobalStyle />
         <Header />
         <Outlet />
+        <Footer />
+        <TopBtn />
       </ThemeProvider>
     </>
   );
