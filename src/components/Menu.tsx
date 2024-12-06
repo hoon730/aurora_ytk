@@ -8,7 +8,7 @@ const Items = styled.ul<{ $openMenu: boolean }>`
   @media screen and (max-width: 1024px) {
     gap: 20px;
   }
-  @media screen and (max-width: 780px) {
+  @media screen and (max-width: 768px) {
     display: ${({ $openMenu }) => ($openMenu ? "flex" : "none")};
     width: 100%;
     height: 60px;

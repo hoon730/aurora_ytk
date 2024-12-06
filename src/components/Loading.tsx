@@ -81,6 +81,7 @@ const Loading = () => {
         <defs>
           <clipPath id="clip">
             <motion.rect
+              initial={{ width: 0 }}
               width="0"
               height="1000"
               animate={{ width: 1000 }}

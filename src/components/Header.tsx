@@ -19,8 +19,8 @@ const Nav = styled(motion.nav)<{ $isPre: boolean }>`
   position: fixed;
   top: 0;
   z-index: 10;
-  @media screen and (max-width: 780px) {
-    padding: 0 20px;
+  @media screen and (max-width: 768px) {
+    padding: 0 32px;
   }
 `;
 
@@ -30,7 +30,7 @@ const BackButton = styled.span<{ $isHome: boolean }>`
   background: url("/img/left_arrow.png") center/cover no-repeat;
   cursor: pointer;
   display: none;
-  @media screen and (max-width: 780px) {
+  @media screen and (max-width: 768px) {
     display: ${({ $isHome }) => ($isHome ? "none" : "block")};
   }
 `;
@@ -40,7 +40,7 @@ const Logo = styled.img<{ $openSearch: boolean }>`
   height: 33px;
   z-index: 10;
   cursor: pointer;
-  @media screen and (max-width: 780px) {
+  @media screen and (max-width: 768px) {
     margin: ${({ $openSearch }) => ($openSearch ? "0" : "0 auto")};
   }
 `;
@@ -53,7 +53,7 @@ const Right = styled(motion.div)`
   @media screen and (max-width: 1024px) {
     width: 85%;
   }
-  @media screen and (max-width: 780px) {
+  @media screen and (max-width: 768px) {
     width: fit-content;
   }
 `;
@@ -66,13 +66,8 @@ const SearchAndProfile = styled.div`
   @media screen and (max-width: 1024px) {
     gap: 30px;
   }
-`;
-
-const Logout = styled.span`
-  transition: opacity 0.3s;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.7;
+  @media screen and (max-width: 768px) {
+    gap: 0px;
   }
 `;
 
@@ -89,12 +84,17 @@ const Header = () => {
   const navigation = useNavigate();
 
   useEffect(() => {
-    setIsHome(matchHome ? true : false);
-  }, [matchHome]);
+    if (isHome !== (matchHome ? true : false)) {
+      setIsHome(matchHome ? true : false);
+    }
+  }, [matchHome, isHome]);
 
   useEffect(() => {
-    setIsPre(matchPre || matchLogin ? true : false);
-  }, [matchPre, matchLogin]);
+    const newIsPre = matchPre || matchLogin ? true : false;
+    if (isPre !== newIsPre) {
+      setIsPre(newIsPre);
+    }
+  }, [matchPre, matchLogin, isPre]);
 
   const goToMain = () => {
     navigation("/");
@@ -141,12 +141,15 @@ const Header = () => {
           <Menu openMenu={openMenu} />
           <SearchAndProfile>
             <HeaderSearch openSearch={openSearch} />
-            <Logout onClick={() => navigation("/login")}>로그아웃</Logout>
             <UserBox position="top" />
           </SearchAndProfile>
         </Right>
       </Nav>
-      <MobileHeader handleSearch={handleSearch} handleMenu={handleMenu} />
+      <MobileHeader
+        isPre={isPre}
+        handleSearch={handleSearch}
+        handleMenu={handleMenu}
+      />
     </>
   );
 };
