@@ -11,9 +11,9 @@ import {
   getTopRated,
   getGenres,
 } from "../api";
-import Slider from "../components/Slider";
+import Loading from "../components/Loading";
+import Slider from "../components/home/Slider";
 import MainBanner from "../components/mainBanner/MainBanner";
-
 
 const Container = styled.div`
   width: 100%;
@@ -22,16 +22,6 @@ const Container = styled.div`
   padding-bottom: 150px;
   background: ${(props) => props.theme.black.darker};
   overflow: hidden;
-`;
-
-const Loader = styled.div`
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 40px;
-  color: ${(props) => props.theme.white.lighter};
 `;
 
 const Home = () => {
@@ -93,9 +83,9 @@ const Home = () => {
 
   return (
     <Container>
-      <MainBanner/>
+      <MainBanner />
       {nowPlayingLoaing ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           {nowPlayingData && (
@@ -109,7 +99,7 @@ const Home = () => {
         </>
       )}
       {todaysMoviesLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           {todaysMoviesData && (
@@ -124,7 +114,7 @@ const Home = () => {
       )}
 
       {topRatedLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           {topRatedData && (
@@ -139,7 +129,7 @@ const Home = () => {
       )}
 
       {popularLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           {popularData && (
@@ -154,7 +144,7 @@ const Home = () => {
       )}
 
       {thrillerLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           {thrillerData && (
@@ -169,7 +159,7 @@ const Home = () => {
       )}
 
       {comedyLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           {comedyData && (
@@ -184,7 +174,7 @@ const Home = () => {
       )}
 
       {fantasyLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           {fantasyData && (
