@@ -39,6 +39,7 @@ const CategoryTitle = styled.h3`
 
 const SliderContainer = styled.div`
   width: 100%;
+  position: relative;
 
   .button {
     position: absolute;
@@ -399,12 +400,11 @@ const Slider = ({
           {data?.results.map((movie, idx) => (
             <SwiperSlide key={movie.id}>
               <Box
-                onClick={() => {
-                  navigate(`/detail/${movie.id}`);
-                }}
                 key={movie.id}
                 layoutId={`${category}_${movie.id}`}
                 variants={category === "tr" ? trVariants : boxVariants}
+                initial="normal"
+                whileHover="hover"
                 $bgPhoto={
                   category === "tr"
                     ? makeImagePath(movie.poster_path || "", "w500")
@@ -418,8 +418,9 @@ const Slider = ({
                     ? "last-slide"
                     : ""
                 }
-                initial="normal"
-                whileHover="hover"
+                onClick={() => {
+                  navigate(`/detail/${movie.id}`);
+                }}
               >
                 {category !== "tr" ? (
                   logos[movie.id] ? (
