@@ -88,8 +88,11 @@ const LoginInput = styled.input`
     outline: none;
     border-bottom: 3px solid ${(props) => props.theme.aqua.aqua1};
   }
-  &:focus + label {
+  &:focus + label,
+  &:not(:placeholder-shown) + label {
     opacity: 1;
+    font-size: 12px;
+    top: 23%;
   }
 `;
 
@@ -97,11 +100,11 @@ const Label = styled.label<{ $isEmpty: string }>`
   position: absolute;
   transform: translateY(-50%);
   padding-left: 20px;
-  font-size: ${({ $isEmpty }) => ($isEmpty === "" ? "16px" : "12px")};
+  font-size: 16px;
   color: ${(props) => props.theme.aqua.aqua1};
   pointer-events: none;
   transition: all 0.2s ease-in-out;
-  top: ${({ $isEmpty }) => ($isEmpty === "" ? "50%" : "23%")};
+  top: 50%;
 `;
 
 const Button = styled.button`
@@ -135,8 +138,12 @@ const CopyrightTitle = styled.span`
 `;
 
 const CopyrightText = styled.p`
-  font: bold 12px "pretendard";
+  font: 12px "pretendard";
   color: #6a6a6a;
+  span {
+    color: ${(props) => props.theme.aqua.aqua1};
+    cursor: pointer;
+  }
 `;
 
 const Login = () => {
@@ -163,13 +170,16 @@ const Login = () => {
             <DarkLogo src="/img/darklogo.png" width="119" height="38" />
           </LogoBox>
           <GuideBox>
-            <GuideTitle>이메일을 입력하세요</GuideTitle>
+            <GuideTitle>
+              {next ? "비밀번호를 입력하세요" : "이메일을 입력하세요"}
+            </GuideTitle>
             <GuideText>
               MyAurora 계정으로 오로라+에 로그인하세요.
               <br />
-              이메일을 입력해주세요.
+              {next ? "비밀번호를 입력해주세요." : "이메일을 입력해주세요."}
             </GuideText>
           </GuideBox>
+
           <Form onSubmit={onEmailSubmit}>
             {next ? (
               <InputBox>
@@ -178,7 +188,7 @@ const Login = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder=" " // 비워 둬야 label이 작동합니다.
+                  placeholder=" " // 비워 둬야 label이 작동해요!
                   required
                 />
                 <Label htmlFor="password" $isEmpty={password}>
@@ -192,7 +202,7 @@ const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder=" " // 비워 둬야 label이 작동합니다.
+                  placeholder=" " // 비워 둬야 label이 작동해요!
                   required
                 />
                 <Label htmlFor="email" $isEmpty={email}>
@@ -204,12 +214,13 @@ const Login = () => {
           </Form>
           <CopyrightBox>
             <CopyrightTitle>
-              오로라+는 The Wait Aurora Family of Companies의 계열사입니다.
+              오로라+는 The Aurora Family of Companies의 계열사입니다.
             </CopyrightTitle>
             <CopyrightText>
-              MyAurora 계정으로 Aurora+, ESPN, Walt Aurora World, 기타 다른
-              서비스 등 The Walt Aurora Family of Companies의 다양한 서비스에
-              간편하게 로그인해 보세요.
+              MyAurora 계정으로 Aurora+, ESPN, Aurora World,{" "}
+              <span>기타 다른 서비스</span> 등 The Aurora Family of Companies의
+              다양한 서비스에 간편하게 로그인해 보세요.
+              {/* 반가워요 다시만나요 내일 또 봐요~~ 찰칵찰칵 */}
             </CopyrightText>
           </CopyrightBox>
         </LonginBox>
