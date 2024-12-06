@@ -93,7 +93,7 @@ const Home = () => {
 
   return (
     <Container>
-      <MainBanner slides={slides} />
+      <MainBanner/>
       {nowPlayingLoaing ? (
         <Loader>Loading...</Loader>
       ) : (

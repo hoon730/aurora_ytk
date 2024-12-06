@@ -52,7 +52,6 @@ const App = () => {
         <Outlet />
         <Footer />
         <TopBtn />
-
       </ThemeProvider>
     </>
   );
