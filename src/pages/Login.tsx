@@ -220,7 +220,6 @@ const Login = () => {
               MyAurora 계정으로 Aurora+, ESPN, Aurora World,{" "}
               <span>기타 다른 서비스</span> 등 The Aurora Family of Companies의
               다양한 서비스에 간편하게 로그인해 보세요.
-              {/* 반가워요 다시만나요 내일 또 봐요~~ 찰칵찰칵 */}
             </CopyrightText>
           </CopyrightBox>
         </LonginBox>
