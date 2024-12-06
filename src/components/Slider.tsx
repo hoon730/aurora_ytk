@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { getMovieDetailInfo, GetMoviesResult, getMovieImages } from "../api";
 import { makeImagePath, runtimeCalc } from "../utils";
 
@@ -9,7 +9,7 @@ import { BsChevronCompactLeft } from "react-icons/bs";
 import { BsChevronCompactRight } from "react-icons/bs";
 import { MdMoreVert } from "react-icons/md";
 
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperClass } from "swiper";
 import "swiper/css";
@@ -24,6 +24,7 @@ const Container = styled.div`
 
   .swiper {
     overflow: visible;
+    padding: 0 40px;
   }
 
   .swiper-slide {
