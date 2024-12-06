@@ -1,26 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { getMovieLogos } from "../../api";
+import { movieIds } from "./MainBanner";
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  align-items: center;
+  margin: 10px auto;
+  @media (max-width: 768px) {
+    display: grid;
+    width: 96%;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
 `;
 
 const SlideButton = styled.button<{ $isActive: boolean }>`
-  width: 15px;
-  height: 15px;
+  width: 15%;
+  height: 150px;
   margin: 0 5px;
-  border: none;
-  border-radius: 50%;
-  background-color: ${(props) => (props.$isActive ? "#333" : "#ccc")};
+  border: 3px solid ${(props) => (props.$isActive ? "#ccc" : "#041a27")};
+  border-radius: 5px;
+  background-color: ${(props) => (props.$isActive ? "#111" : "#052131")};
   cursor: pointer;
   outline: none;
   transition: background-color 0.3s;
-
   &:hover {
-    background-color: ${(props) => (props.$isActive ? "#111" : "#888")};
+    background-color: #122;
   }
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const ButtonImage = styled.img`
+  width: 70%;
+  height: auto;
+  border-radius: 5px;
 `;
 
 interface SlideButtonsProps {
@@ -34,16 +51,30 @@ const SlideButtons: React.FC<SlideButtonsProps> = ({
   currentSlide,
   onSlideChange,
 }) => {
+  const [logos, setLogos] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchLogos = async () => {
+      const fetchedLogos = await getMovieLogos(movieIds); // Use the function
+      setLogos(fetchedLogos);
+    };
+
+    fetchLogos();
+  }, []);
+
   return (
     <ButtonContainer>
-      {Array.from({ length: totalSlides }).map((_, index) => (
+      {logos.map((logo, index) => (
         <SlideButton
           key={index}
           $isActive={index === currentSlide}
           onMouseEnter={() => onSlideChange(index)}
-        />
+        >
+          <ButtonImage src={logo} alt={`Movie ${index + 1} Logo (Korean)`} />
+        </SlideButton>
       ))}
     </ButtonContainer>
   );
 };
+
 export default SlideButtons;

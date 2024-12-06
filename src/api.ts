@@ -81,7 +81,9 @@ export interface MovieDetailData {
 }
 
 export const getMovies = async () => {
-  return await fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}&language=ko-KR`)
+  return await fetch(
+    `${BASE_PATH}/movie/now_playing?api_key=${API_KEY}&language=ko-KR`
+  )
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-12) };
@@ -89,7 +91,9 @@ export const getMovies = async () => {
 };
 
 export const getTodaysMovies = async () => {
-  return await fetch(`${BASE_PATH}/trending/movie/day?api_key=${API_KEY}&language=ko-KR`)
+  return await fetch(
+    `${BASE_PATH}/trending/movie/day?api_key=${API_KEY}&language=ko-KR`
+  )
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-12) };
@@ -97,7 +101,9 @@ export const getTodaysMovies = async () => {
 };
 
 export const getPopular = async () => {
-  return await fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}&language=ko-KR`)
+  return await fetch(
+    `${BASE_PATH}/movie/popular?api_key=${API_KEY}&language=ko-KR`
+  )
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-12) };
@@ -105,7 +111,9 @@ export const getPopular = async () => {
 };
 
 export const getTopRated = async () => {
-  return await fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}&language=ko-KR`)
+  return await fetch(
+    `${BASE_PATH}/movie/top_rated?api_key=${API_KEY}&language=ko-KR`
+  )
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-12) };
@@ -113,7 +121,9 @@ export const getTopRated = async () => {
 };
 
 export const getThrillerMovies = async () => {
-  return await fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=53&language=ko-KR`)
+  return await fetch(
+    `${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=53&language=ko-KR`
+  )
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-12) };
@@ -121,7 +131,9 @@ export const getThrillerMovies = async () => {
 };
 
 export const getComedyMovies = async () => {
-  return await fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=35&language=ko-KR`)
+  return await fetch(
+    `${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=35&language=ko-KR`
+  )
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-12) };
@@ -129,7 +141,9 @@ export const getComedyMovies = async () => {
 };
 
 export const getFantasyMovies = async () => {
-  return await fetch(`${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=14`)
+  return await fetch(
+    `${BASE_PATH}/discover/movie?api_key=${API_KEY}&with_genres=14`
+  )
     .then((response) => response.json())
     .then((data) => {
       return { ...data, results: data.results.slice(-12) };
@@ -137,9 +151,11 @@ export const getFantasyMovies = async () => {
 };
 
 export const getGenres = async () => {
-  return await fetch(`${BASE_PATH}/genre/movie/list?api_key=${API_KEY}&language=ko-KR`)
+  return await fetch(
+    `${BASE_PATH}/genre/movie/list?api_key=${API_KEY}&language=ko-KR`
+  )
     .then((response) => response.json())
-    .then((data) => data.genres); 
+    .then((data) => data.genres);
 };
 
 export const searchContents = (keyword: string | null) => {
@@ -213,3 +229,48 @@ export const getMovieImages = (movieId: number) => {
 //     `${BASE_PATH}/movie/${movieId}/release_dates?&api_key=${API_KEY}`
 //   ).then((response) => response.json());
 // };
+
+// 지선인데 어느거 쓸지 몰라서 제가 써야하는 로고 불러오는 거 그냥 추가해서 쓸게요
+
+const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
+export const getMovieLogos = async (movieIds: number[]): Promise<string[]> => {
+  const logoPromises = movieIds.map(async (movieId) => {
+    try {
+      const response = await fetch(
+        `${BASE_PATH}/movie/${movieId}/images?api_key=${API_KEY}&include_image_language=ko`
+      );
+      const data: MovieImages = await response.json();
+      const logoPath =
+        data.logos && data.logos.length > 0 ? data.logos[0].file_path : null;
+
+      return logoPath
+        ? `${IMAGE_BASE_URL}/w500${logoPath}`
+        : "/default-logo-placeholder.jpg";
+    } catch (error) {
+      console.error(`Error fetching logo for movie ID ${movieId}:`, error);
+      return "/default-logo-placeholder.jpg";
+    }
+  });
+
+  return Promise.all(logoPromises);
+};
+
+export const fetchBackdropImages = async (
+  movieIds: number[]
+): Promise<string[]> => {
+  try {
+    const fetchedSlides = await Promise.all(
+      movieIds.map(async (id) => {
+        const response = await fetch(
+          `${BASE_PATH}/movie/${id}?api_key=${API_KEY}`
+        );
+        const data = await response.json();
+        return `${IMAGE_BASE_URL}/original${data.backdrop_path}`;
+      })
+    );
+    return fetchedSlides;
+  } catch (error) {
+    console.error("Error fetching backdrop images:", error);
+    return [];
+  }
+};
