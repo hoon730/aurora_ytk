@@ -5,7 +5,7 @@ import { AiFillHome } from "react-icons/ai";
 import { IoSearch, IoMenu } from "react-icons/io5";
 import UserBox from "./UserBox";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $isPre: boolean }>`
   display: none;
   width: 100%;
   height: 60px;
@@ -14,8 +14,8 @@ const Wrapper = styled.div`
   bottom: 0;
   z-index: 10;
   background: #000;
-  @media screen and (max-width: 780px) {
-    display: block;
+  @media screen and (max-width: 768px) {
+    display: ${({ $isPre }) => ($isPre ? "none" : "block")};
   }
 `;
 
@@ -25,7 +25,7 @@ const Icons = styled.ul`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @media screen and (max-width: 780px) {
+  @media screen and (max-width: 768px) {
     width: 60%;
     margin: 0 auto;
   }
@@ -44,15 +44,17 @@ const Icons = styled.ul`
 `;
 
 const MobileHeader = ({
+  isPre,
   handleSearch,
   handleMenu,
 }: {
+  isPre: boolean;
   handleSearch: () => void;
   handleMenu: () => void;
 }) => {
   const navigation = useNavigate();
   return (
-    <Wrapper>
+    <Wrapper $isPre={isPre}>
       <Icons>
         <li onClick={() => navigation("/")}>
           <AiFillHome />
