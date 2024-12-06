@@ -91,11 +91,9 @@ const Home = () => {
     queryFn: getGenres,
   });
 
-  console.log(fantasyData);
-
   return (
     <Container>
-      <MainBanner slides={slides} />
+      <MainBanner/>
       {nowPlayingLoaing ? (
         <Loader>Loading...</Loader>
       ) : (

@@ -30,6 +30,7 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     }
     /* font-family: "Source Sans 3", serif; */
+    background: ${(props) => props.theme.black.darker};;
   }
 `;
 
@@ -51,7 +52,6 @@ const App = () => {
         <Outlet />
         <Footer />
         <TopBtn />
-
       </ThemeProvider>
     </>
   );

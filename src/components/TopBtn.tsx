@@ -5,7 +5,7 @@ const BtnContainer = styled.div`
   position: fixed;
   bottom: 30px;
   right: 30px;
-  z-index: 5;
+  z-index: 30;
   width: 60px;
   height: 60px;
   background: rgba(0, 0, 0, 0.5);
