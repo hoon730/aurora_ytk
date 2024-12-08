@@ -1,234 +1,477 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useMatch, PathMatch } from "react-router-dom";
 import styled from "styled-components";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { getMovies, GetMoviesResult } from "../api";
-import { makeImagePath } from "../utils";
+import { motion, AnimatePresence } from "framer-motion";
+import { getMovieDetailInfo, GetMoviesResult, getMovieImages } from "../api";
+import { makeImagePath, runtimeCalc } from "../utils";
 
-const Container = styled.div``;
+import { BsChevronCompactLeft } from "react-icons/bs";
+import { BsChevronCompactRight } from "react-icons/bs";
+import { MdMoreVert } from "react-icons/md";
+
+import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper as SwiperClass } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+
+const Container = styled.div`
+  margin-bottom: 50px;
+
+  @media (max-width: 1400px) {
+    margin-bottom: 30px;
+  }
+
+  .swiper {
+    overflow: visible;
+  }
+
+  .swiper-slide {
+    z-index: auto;
+  }
+`;
 
 const CategoryTitle = styled.h3`
+  padding-left: 40px;
+  padding-bottom: 15px;
   color: ${(props) => props.theme.white.lighter};
 `;
 
 const SliderContainer = styled.div`
   width: 100%;
-  height: 100%;
+
+  .button {
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 100%;
+    transform: translateY(-50%);
+    z-index: 5;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      color: #000;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      width: 32px;
+    }
+  }
+
+  &.tr {
+    height: 430px;
+  }
+
+  @media (max-width: 1300px) {
+    &.tr {
+      height: 320px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    &.tr {
+      height: 270px;
+    }
+  }
 `;
 
-const Row = styled(motion.div)`
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-bottom: 10px;
-  padding-left: 40px;
-`;
-
-const Box = styled(motion.div)<{ bgPhoto: string | undefined }>`
-  width: auto;
-  height: 180px;
-  background: url(${(props) => props.bgPhoto}) center/cover no-repeat;
+const Box = styled(motion.div)<{
+  $bgPhoto: string | undefined;
+  $tr: string | undefined;
+}>`
+  height: ${(props) => (props.$tr ? "430px" : "144px")};
+  background: url(${(props) => props.$bgPhoto}) center/cover no-repeat;
   font-size: 22px;
+  border-radius: 5px;
+  box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  &:first-child {
+  position: relative;
+  z-index: 1;
+
+  &.first-slide {
     transform-origin: center left;
   }
-  &:last-child {
+
+  &.last-slide {
     transform-origin: center right;
   }
-`;
 
-const Info = styled(motion.div)`
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  h4 {
-    text-align: center;
-    font-size: 16px;
-    color: ${(props) => props.theme.red};
+  @media (max-width: 1300px) {
+    height: ${(props) => (props.$tr ? "320px" : "144px")};
+  }
+
+  @media (max-width: 768px) {
+    height: ${(props) => (props.$tr ? "270px" : "144px")};
   }
 `;
 
-const ModalBox = styled(motion.div)`
-  position: fixed;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 40vw;
-  height: 68vh;
-  background: ${(props) => props.theme.black.lighter};
-  color: ${(props) => props.theme.white.darker};
-  border-radius: 8px;
-  overflow: hidden;
+const MovieTitle = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+
+  &.no_logo {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 20%,
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0.7) 80%,
+      #000 100%
+    );
+  }
 `;
 
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
+const MovieLogo = styled.img`
+  width: 100%;
+  height: 40px;
+  object-fit: contain;
+`;
+
+const Bg = styled(motion.div)`
+  position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  cursor: pointer;
+  bottom: -100%;
+  z-index: 0;
+  display: none;
+  opacity: 0;
 `;
 
-const MovieCover = styled.div`
-  width: 100%;
-  height: 400px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+const Additional = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  background: #292828;
+  color: #fff;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+  h4 {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    font-size: 14px;
+  }
 `;
 
-const MovieTitle = styled.h3`
-  color: ${(props) => props.theme.white.darker};
-  font-size: 28px;
-  padding: 20px;
-  position: relative;
-  top: -80px;
+const Description = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const Left = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 `;
 
-const MovieOverView = styled.p`
-  padding: 0 20px;
-  line-height: 2;
-  font-size: 20px;
-  position: relative;
-  top: -60px;
+const Right = styled.div`
+  display: flex;
+  gap: 15px;
+`;
+const Button = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  color: #fff;
+
+  svg {
+    font-size: 20px;
+  }
 `;
 
-const rowVariants = {
-  hidden: {
-    x: window.innerWidth + 10,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.innerWidth - 10,
-  },
-};
+const More = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const Date = styled.div`
+  color: #9a9a9a;
+  font-size: 12px;
+`;
+
+const RunnngTime = styled.div`
+  color: #9a9a9a;
+  font-size: 12px;
+`;
+
+const Genres = styled.div`
+  font-size: 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 10px;
+`;
+
+const PrevBtn = styled.div`
+  display: none;
+  opacity: 0;
+  left: 0;
+  &.active {
+    display: flex;
+    opacity: 1;
+  }
+`;
+const NextBtn = styled.div`
+  display: flex;
+  right: 0;
+`;
 
 const boxVariants = {
   normal: { scale: 1 },
   hover: {
-    scale: 1.2,
-    y: -50,
-    transition: { delay: 0.5, duration: 0.3, type: "tween" },
+    scale: 1.15,
+    y: -40,
+    borderBottomLeftRadius: "0px",
+    borderBottomRightRadius: "0px",
+    zIndex: 10,
+    transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
 
-const infoVariants = {
+const trVariants = {
+  normal: { scale: 1 },
   hover: {
-    opacity: 0.7,
-    transition: { delay: 0.5, duration: 0.3, type: "tween" },
+    scale: 1.1,
+    y: -45,
+    borderBottomLeftRadius: "0px",
+    borderBottomRightRadius: "0px",
+    zIndex: 10,
+    transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
 
-const offset = 5;
+const bgVariants = {
+  hover: {
+    display: "block",
+    opacity: 1,
+    zIndex: 10,
+    transition: { delay: 0.3, duration: 0.3, type: "tween" },
+  },
+};
 
 const Slider = ({
+  category,
   data,
   categoryTitle,
+  genres = [],
 }: {
+  category: string;
   data: GetMoviesResult;
   categoryTitle: string;
+  genres: { id: number; name: string }[];
 }) => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const movieMatch: PathMatch<string> | null = useMatch("/movies/:movieId");
 
-  const [index, setIndex] = useState(0);
-  const [leaving, setLeaving] = useState(false);
+  const [isClick, setIsClick] = useState(false);
 
-  const { scrollY } = useScroll();
+  const [firstVisibleIndex, setFirstVisibleIndex] = useState(0);
+  const [lastVisibleIndex, setLastVisibleIndex] = useState(0);
 
-  const toggleLeaving = () => setLeaving((prev) => !prev);
+  const genreMap = React.useMemo(() => {
+    if (!genres) return new Map<number, string>();
+    const map = new Map<number, string>();
+    genres.forEach((genre) => map.set(genre.id, genre.name));
+    return map;
+  }, [genres]);
 
-  const onBoxClick = (movieId: number) => {
-    history(`/movies/${movieId}`);
+  const getGenreNames = (genreIds: number[]) => {
+    return genreIds
+      .slice(0, 3)
+      .map((id) => genreMap.get(id))
+      .filter(Boolean)
+      .join(" • ");
   };
 
-  const onOverlayClick = () => {
-    history(`/`);
+  const [movieDetails, setMovieDetails] = useState<Record<number, any>>({});
+
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      const details: Record<number, any> = {};
+      for (const movie of data.results) {
+        const detail = await getMovieDetailInfo(movie.id);
+        details[movie.id] = detail.koreanData.runtime;
+      }
+      setMovieDetails(details);
+    };
+
+    fetchMovieDetails();
+  }, [data]);
+
+  const getRuntime = (movieId: number) => {
+    return runtimeCalc(movieDetails[movieId] || 0);
   };
 
-  const clickedMovie =
-    movieMatch?.params.movieId &&
-    data?.results.find((movie) => movie.id === +movieMatch.params.movieId!);
+  const [logos, setLogos] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    const fetchLogos = async () => {
+      const logoData: Record<number, string> = {};
+      for (const movie of data.results) {
+        const images = await getMovieImages(movie.id);
+        if (images.logos && images.logos.length > 0) {
+          logoData[movie.id] = images.logos[0].file_path;
+        }
+      }
+      setLogos(logoData);
+    };
+
+    fetchLogos();
+  }, [data]);
+
+  const makeLogoUrl = (filePath: string) =>
+    `https://image.tmdb.org/t/p/w500${filePath}`;
+
+  // console.log(window.innerWidth);
+
+  const obj = {
+    320: 2,
+    480: 3,
+  };
 
   return (
     <Container>
       <CategoryTitle>{categoryTitle}</CategoryTitle>
-      <SliderContainer>
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-          <Row
-            variants={rowVariants}
-            key={index}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={{ type: "tween", duration: 1 }}
-          >
-            {data?.results
-              .slice(
-                index === 0 ? index * offset : index * offset - 1,
-                index === Math.ceil(data?.results.length / offset) - 1
-                  ? index * offset + offset
-                  : index * offset + offset + 1
-              )
-              .map((movie) => (
-                <Box
-                  onClick={() => onBoxClick(movie.id)}
-                  key={movie.id}
-                  layoutId={movie.id + ""}
-                  variants={boxVariants}
-                  bgPhoto={makeImagePath(movie.backdrop_path || "")}
-                  initial="normal"
-                  whileHover="hover"
-                >
-                  <Info variants={infoVariants}>
+      <SliderContainer className={category === "tr" ? "tr" : ""}>
+        <Swiper
+          modules={[Navigation]}
+          slidesPerView={2}
+          slidesPerGroup={2}
+          spaceBetween={10}
+          loop={true}
+          breakpoints={{
+            320: {
+              slidesPerView: 2,
+              slidesPerGroup: 2,
+            },
+            480: {
+              slidesPerView: 3,
+              slidesPerGroup: 3,
+            },
+            768: {
+              slidesPerView: 4,
+              slidesPerGroup: 4,
+            },
+            1400: {
+              slidesPerView: 6,
+              slidesPerGroup: 6,
+            },
+          }}
+          onSlideChange={(swiper: SwiperClass) => {
+            const activeIndex = swiper.activeIndex;
+            const visibleSlides = swiper.params.slidesPerView as number;
+            const totalSlides = data.results.length;
+
+            setFirstVisibleIndex(activeIndex % totalSlides);
+            setLastVisibleIndex(
+              (activeIndex + visibleSlides - 1) % totalSlides
+            );
+          }}
+          className="swiper"
+          navigation={{
+            prevEl: ".custom-prev",
+            nextEl: ".custom-next",
+          }}
+        >
+          {data?.results.map((movie, idx) => (
+            <SwiperSlide key={movie.id}>
+              <Box
+                onClick={() => {
+                  navigate(`/detail/${movie.id}`);
+                }}
+                key={movie.id}
+                layoutId={`${category}_${movie.id}`}
+                variants={category === "tr" ? trVariants : boxVariants}
+                $bgPhoto={
+                  category === "tr"
+                    ? makeImagePath(movie.poster_path || "", "w500")
+                    : makeImagePath(movie.backdrop_path || "", "w500")
+                }
+                $tr={category === "tr" ? "tr" : ""}
+                className={
+                  idx === firstVisibleIndex
+                    ? "first-slide"
+                    : idx === lastVisibleIndex
+                    ? "last-slide"
+                    : ""
+                }
+                initial="normal"
+                whileHover="hover"
+              >
+                {category !== "tr" ? (
+                  logos[movie.id] ? (
+                    <MovieTitle>
+                      <MovieLogo
+                        src={makeLogoUrl(logos[movie.id])}
+                        alt={`${movie.title} Logo`}
+                      />
+                    </MovieTitle>
+                  ) : (
+                    <MovieTitle className="no_logo">{movie.title}</MovieTitle>
+                  )
+                ) : null}
+                <Bg variants={bgVariants}>
+                  <Additional>
                     <h4>{movie.title}</h4>
-                  </Info>
-                </Box>
-              ))}
-          </Row>
-        </AnimatePresence>
+                    <Description>
+                      <Left>
+                        <More>
+                          <Date>{movie.release_date.slice(0, 4)}</Date>
+                          <RunnngTime>{getRuntime(movie.id)}</RunnngTime>
+                        </More>
+                        <Genres>{getGenreNames(movie.genre_ids)}</Genres>
+                      </Left>
+                      <Right>
+                        <Button>
+                          <MdMoreVert />
+                        </Button>
+                      </Right>
+                    </Description>
+                  </Additional>
+                </Bg>
+              </Box>
+            </SwiperSlide>
+          ))}
+          <PrevBtn
+            className={
+              isClick ? "active button custom-prev" : "button custom-prev"
+            }
+          >
+            <BsChevronCompactLeft />
+          </PrevBtn>
+          <NextBtn
+            className="button custom-next"
+            onClick={() => setIsClick(true)}
+          >
+            <BsChevronCompactRight />
+          </NextBtn>
+        </Swiper>
       </SliderContainer>
-      <AnimatePresence>
-        {movieMatch ? (
-          <>
-            <Overlay
-              onClick={onOverlayClick}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <ModalBox
-              layoutId={movieMatch.params.movieId}
-              style={{ top: scrollY.get() + 60 }}
-            >
-              {clickedMovie && (
-                <>
-                  <MovieCover
-                    style={{
-                      backgroundImage: `linear-gradient(to top, #000, transparent), url(${makeImagePath(
-                        clickedMovie.backdrop_path,
-                        "w500"
-                      )})`,
-                    }}
-                  />
-                  <MovieTitle>{clickedMovie.title}</MovieTitle>
-                  <MovieOverView>{clickedMovie.overview}</MovieOverView>
-                </>
-              )}
-            </ModalBox>
-          </>
-        ) : null}
-      </AnimatePresence>
     </Container>
   );
 };
 
-export default Slider;
+export default React.memo(Slider);

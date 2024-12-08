@@ -1,7 +1,10 @@
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { Outlet, useMatch } from "react-router-dom";
+import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import theme from "./theme";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
+import TopBtn from "./components/TopBtn";
+import { useEffect, useState } from "react";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -27,16 +30,36 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     }
     /* font-family: "Source Sans 3", serif; */
+    background: ${(props) => props.theme.black.darker};;
   }
 `;
 
+export const SectionContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5.6vw;
+  text-align: center;
+`;
+
 const App = () => {
+  const matchPre = useMatch("/pre-loading");
+  const matchLogin = useMatch("/login");
+  const [isPre, setIsPre] = useState(matchPre || matchLogin ? true : false);
+  useEffect(() => {
+    const newIsPre = matchPre || matchLogin ? true : false;
+    if (isPre !== newIsPre) {
+      setIsPre(newIsPre);
+    }
+  }, [matchPre, matchLogin, isPre]);
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Header />
+        <Header isPre={isPre} />
         <Outlet />
+        <Footer />
+        <TopBtn isPre={isPre} />
       </ThemeProvider>
     </>
   );

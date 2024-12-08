@@ -1,144 +1,102 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
-import { Link, useMatch, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useMatch, useNavigate } from "react-router-dom";
+import Menu from "./Menu";
+import UserBox from "./UserBox";
+import MobileHeader from "./MobileHeader";
+import HeaderSearch from "./HeaderSearch";
 
-const Nav = styled(motion.nav)`
+const Nav = styled(motion.nav)<{ $isPre: boolean }>`
   width: 100%;
   height: 60px;
-  display: flex;
+  display: ${({ $isPre }) => ($isPre ? "none" : "flex")};
   justify-content: space-between;
   align-items: center;
-  padding: 0 80px;
+  padding: 0 40px;
   color: ${(props) => props.theme.white.lighter};
   font-size: 16px;
   position: fixed;
   top: 0;
-  z-index: 1;
-`;
-
-const Left = styled.div`
-  display: flex;
-  gap: 120px;
-`;
-const Right = styled.div`
-  display: flex;
-  gap: 30px;
-`;
-
-const Col = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 50px;
-`;
-
-const Logo = styled(motion.img)`
-  width: 70px;
-  height: 33px;
-  fill: ${(props) => props.theme.red};
-  cursor: pointer;
-  path {
-    stroke-width: 10px;
-    stroke: ${(props) => props.theme.white.darker};
+  z-index: 10;
+  @media screen and (max-width: 768px) {
+    padding: 0 32px;
   }
 `;
 
-const Items = styled.ul`
-  display: flex;
-  align-items: center;
-  gap: 50px;
-`;
-
-const Item = styled.li`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  transition: opacity 0.3s;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.7;
-  }
-`;
-
-const Search = styled.form`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  position: relative;
-  cursor: pointer;
-  svg {
-    width: 20px;
-    height: 20px;
-    fill: ${(props) => props.theme.white.lighter};
-  }
-`;
-
-const Input = styled(motion.input)`
-  width: 200px;
-  position: absolute;
-  left: -170px;
-  transform-origin: right center;
-  background: transparent;
-  font-size: 16px;
-  border: none;
-  border-bottom: 1px solid ${(props) => props.theme.white.darker};
-  &:focus {
-    outline: none;
-  }
-`;
-
-const UserBox = styled.div`
+const BackButton = styled.span<{ $isHome: boolean }>`
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
+  background: url("/img/left_arrow.png") center/cover no-repeat;
+  cursor: pointer;
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: ${({ $isHome }) => ($isHome ? "none" : "block")};
+  }
 `;
 
-const UserImg = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+const Logo = styled.img<{ $openSearch: boolean }>`
+  width: 70px;
+  height: 33px;
+  z-index: 10;
+  cursor: pointer;
+  @media screen and (max-width: 768px) {
+    margin: ${({ $openSearch }) => ($openSearch ? "0" : "0 auto")};
+  }
 `;
 
-const logoVariants = {
-  normal: { fillOpacity: 1 },
-  active: {
-    fillOpacity: [0, 1, 0],
-    transition: {
-      repeat: Infinity,
-    },
-  },
-};
+const Right = styled(motion.div)`
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  background: ${({ theme }) => theme.black.darker};
+  @media screen and (max-width: 1024px) {
+    width: 85%;
+  }
+  @media screen and (max-width: 768px) {
+    width: fit-content;
+  }
+`;
 
-interface Form {
-  keyword: string;
-}
+const SearchAndProfile = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 50px;
 
-const Header = () => {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const homeMatch = useMatch("/");
-  const modalMatch = useMatch("/movies/*");
-  const tvMatch = useMatch("/tv");
-  const inputAnimation = useAnimation();
+  @media screen and (max-width: 1024px) {
+    gap: 30px;
+  }
+  @media screen and (max-width: 768px) {
+    gap: 0px;
+  }
+`;
+
+const Header = ({ isPre }: { isPre: boolean }) => {
+  const matchHome = useMatch("/");
+  const [isHome, setIsHome] = useState(matchHome ? true : false);
+  const [openSearch, setOpenSearch] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
-  const main = useNavigate();
+  const navigation = useNavigate();
+
+  useEffect(() => {
+    if (isHome !== (matchHome ? true : false)) {
+      setIsHome(matchHome ? true : false);
+    }
+  }, [matchHome, isHome]);
 
   const goToMain = () => {
-    main("/");
+    navigation("/");
   };
 
-  const { register, handleSubmit, setValue } = useForm<Form>();
-  const onValid = (data: Form) => {
-    main(`/search?keyword=${data.keyword}`);
-    setValue("keyword", "");
+  const goBack = () => {
+    window.history.back();
   };
 
   const navVariants = {
     top: { background: "#053747" },
-    scroll: { background: "rgba(255, 255, 255, 1)" },
+    scroll: { background: "#052131" },
   };
 
   useEffect(() => {
@@ -151,75 +109,39 @@ const Header = () => {
     });
   }, [scrollY]);
 
-  const openSearch = () => {
-    if (searchOpen) {
-      inputAnimation.start({
-        scaleX: 0,
-      });
-    } else {
-      inputAnimation.start({
-        scaleX: 1,
-      });
-    }
-    setSearchOpen((prev) => !prev);
+  const handleSearch = () => {
+    setOpenSearch((prev) => !prev);
+  };
+
+  const handleMenu = () => {
+    setOpenMenu((prev) => !prev);
   };
 
   return (
-    <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
-      <Left>
-        <Logo
-          src="/img/logo.png"
-          onClick={goToMain}
-          variants={logoVariants}
-          initial="normal"
-          whileHover="active"
-          width="1024"
-          height="276.742"
-        />
-        <Items>
-          <Item>
-            <Link to={"/"}>홈</Link>
-          </Item>
-          <Item>
-            <Link to={"/tv"}>영화</Link>
-          </Item>
-          <Item>
-            <Link to={"/"}>시리즈</Link>
-          </Item>
-          <Item>
-            <Link to={"/"}>오지지널</Link>
-          </Item>
-          <Item>
-            <Link to={"/"}>관심콘텐츠</Link>
-          </Item>
-        </Items>
-      </Left>
-      <Right>
-        <Search onSubmit={handleSubmit(onValid)}>
-          <motion.svg
-            onClick={openSearch}
-            animate={{ x: searchOpen ? -194 : 0 }}
-            transition={{ type: "linear" }}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-          >
-            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-          </motion.svg>
-          <Input
-            {...register("keyword", { required: true, minLength: 2 })}
-            type="text"
-            transition={{ type: "linear" }}
-            placeholder="Search for MOVIE or TV"
-            animate={inputAnimation}
-            initial={{ scaleX: 0 }}
-          />
-        </Search>
-        <UserBox>
-          <UserImg src="/img/profile.png" />
-        </UserBox>
-      </Right>
-    </Nav>
+    <>
+      <Nav
+        $isPre={isPre}
+        variants={navVariants}
+        animate={navAnimation}
+        initial={"top"}
+      >
+        <BackButton $isHome={isHome} onClick={goBack}></BackButton>
+        <Logo $openSearch={openSearch} src="/img/logo.png" onClick={goToMain} />
+        <Right variants={navVariants} animate={navAnimation}>
+          <Menu openMenu={openMenu} />
+          <SearchAndProfile>
+            <HeaderSearch openSearch={openSearch} />
+            <UserBox position="top" />
+          </SearchAndProfile>
+        </Right>
+      </Nav>
+      <MobileHeader
+        isPre={isPre}
+        handleSearch={handleSearch}
+        handleMenu={handleMenu}
+      />
+    </>
   );
 };
 
-export default Header;
+export default React.memo(Header);
