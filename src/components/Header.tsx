@@ -71,12 +71,9 @@ const SearchAndProfile = styled.div`
   }
 `;
 
-const Header = () => {
+const Header = ({ isPre }: { isPre: boolean }) => {
   const matchHome = useMatch("/");
   const [isHome, setIsHome] = useState(matchHome ? true : false);
-  const matchPre = useMatch("/pre-loading");
-  const matchLogin = useMatch("/login");
-  const [isPre, setIsPre] = useState(matchPre || matchLogin ? true : false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const navAnimation = useAnimation();
@@ -88,13 +85,6 @@ const Header = () => {
       setIsHome(matchHome ? true : false);
     }
   }, [matchHome, isHome]);
-
-  useEffect(() => {
-    const newIsPre = matchPre || matchLogin ? true : false;
-    if (isPre !== newIsPre) {
-      setIsPre(newIsPre);
-    }
-  }, [matchPre, matchLogin, isPre]);
 
   const goToMain = () => {
     navigation("/");

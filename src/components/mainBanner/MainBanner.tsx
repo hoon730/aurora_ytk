@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import SlideButtons from "./SlideButtons";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +30,7 @@ const Slide = styled.div<{ $image: string; $isActive: boolean }>`
   margin-left: 3%;
   height: 100%;
   background-size: cover;
-  background-position: center;
+  background-position: 50% 10%;
   background-image: url(${(props) => props.$image});
   border: ${(props) => (props.$isActive ? "4px solid white" : "none")};
   position: relative;
@@ -53,7 +53,7 @@ const Slide = styled.div<{ $image: string; $isActive: boolean }>`
     @media (max-width: 768px) {
       left: 50%;
       width: 60%;
-      transform: translateX(-50%)
+      transform: translateX(-50%);
     }
   }
 `;
@@ -64,7 +64,23 @@ const MainBanner = () => {
   const [slides, setSlides] = useState<string[]>([]);
   const [logos, setLogos] = useState<string[]>([]);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
   const navigate = useNavigate();
+  const slideCount = slides.length;
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startX = useRef<number | null>(null);
+  const isDragging = useRef<boolean>(false);
+
+  const startInterval = () => {
+    intervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideCount);
+    }, 3000);
+  };
+
+  const stopInterval = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
 
   useEffect(() => {
     const loadSlidesAndLogos = async () => {
@@ -77,24 +93,77 @@ const MainBanner = () => {
     loadSlidesAndLogos();
   }, []);
 
-  const handleSlideChange = (index: number) => {
-    setCurrentSlide(index);
+  useEffect(() => {
+    if (!isHovered) {
+      startInterval();
+    }
+    return () => stopInterval();
+  }, [isHovered, slideCount]);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    stopInterval();
   };
 
-  const handleSlideClick = (index: number) => {
-    const movieId = movieIds[index];
-    navigate(`/detail/${movieId}`);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    stopInterval();
+    startX.current = e.clientX;
+    isDragging.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (startX.current !== null) {
+      const deltaX = e.clientX - startX.current;
+      if (Math.abs(deltaX) > 10) {
+        isDragging.current = true;
+      }
+    }
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (startX.current !== null) {
+      const deltaX = e.clientX - startX.current;
+
+      if (Math.abs(deltaX) > 100) {
+        if (deltaX > 0) {
+          setCurrentSlide((prev) => (prev > 0 ? prev - 1 : slideCount - 1));
+        } else {
+          setCurrentSlide((prev) => (prev + 1) % slideCount);
+        }
+      }
+      startX.current = null;
+      startInterval();
+    }
+  };
+
+  const handleClick = (index: number) => {
+    if (!isDragging.current) {
+      const movieId = movieIds[index];
+      navigate(`/detail/${movieId}`);
+    }
   };
 
   return (
     <BannerContainer>
-      <SlideWrapper $currentSlide={currentSlide}>
+      <SlideWrapper
+        $currentSlide={currentSlide}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onDragStart={(e) => e.preventDefault()} // Prevent native drag
+      >
         {slides.map((slide, index) => (
           <Slide
             key={index}
             $image={slide}
             $isActive={index === currentSlide}
-            onClick={() => handleSlideClick(index)}
+            onClick={() => handleClick(index)}
           >
             {logos[index] && (
               <img
@@ -107,11 +176,13 @@ const MainBanner = () => {
         ))}
       </SlideWrapper>
       {slides.length > 0 && (
-        <SlideButtons
-          totalSlides={slides.length}
-          currentSlide={currentSlide}
-          onSlideChange={handleSlideChange}
-        />
+        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <SlideButtons
+            totalSlides={slides.length}
+            currentSlide={currentSlide}
+            onSlideChange={(index) => setCurrentSlide(index)}
+          />
+        </div>
       )}
     </BannerContainer>
   );
