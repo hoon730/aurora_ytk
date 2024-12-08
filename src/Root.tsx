@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useMatch } from "react-router-dom";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import theme from "./theme";
 import Header from "./components/Header";
@@ -43,22 +43,15 @@ export const SectionContainer = styled.section`
 `;
 
 const App = () => {
-  const [isPre, setIsPre] = useState(false);
-  // const matchPre = useMatch("/pre-loading");
-  // const matchLogin = useMatch("/login");
+  const matchPre = useMatch("/pre-loading");
+  const matchLogin = useMatch("/login");
+  const [isPre, setIsPre] = useState(matchPre || matchLogin ? true : false);
   useEffect(() => {
-    const isPrePath =
-      window.location.pathname.includes("pre-loading") ||
-      window.location.pathname.includes("login");
-    setIsPre(isPrePath);
-  }, []);
-  // const [isPre, setIsPre] = useState(matchPre || matchLogin ? true : false);
-  // useEffect(() => {
-  //   const newIsPre = matchPre || matchLogin ? true : false;
-  //   if (isPre !== newIsPre) {
-  //     setIsPre(newIsPre);
-  //   }
-  // }, [matchPre, matchLogin, isPre]);
+    const newIsPre = matchPre || matchLogin ? true : false;
+    if (isPre !== newIsPre) {
+      setIsPre(newIsPre);
+    }
+  }, [matchPre, matchLogin, isPre]);
   return (
     <>
       <ThemeProvider theme={theme}>
