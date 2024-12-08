@@ -44,18 +44,22 @@ interface SlideButtonsProps {
   totalSlides: number;
   currentSlide: number;
   onSlideChange: (index: number) => void;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
 }
 
 const SlideButtons: React.FC<SlideButtonsProps> = ({
   totalSlides,
   currentSlide,
   onSlideChange,
+  onHoverStart,
+  onHoverEnd,
 }) => {
   const [logos, setLogos] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchLogos = async () => {
-      const fetchedLogos = await getMovieLogos(movieIds); // Use the function
+      const fetchedLogos = await getMovieLogos(movieIds);
       setLogos(fetchedLogos);
     };
 
@@ -68,7 +72,13 @@ const SlideButtons: React.FC<SlideButtonsProps> = ({
         <SlideButton
           key={index}
           $isActive={index === currentSlide}
-          onMouseEnter={() => onSlideChange(index)}
+          onMouseEnter={() => {
+            if (onHoverStart) onHoverStart(); 
+            onSlideChange(index); 
+          }}
+          onMouseLeave={() => {
+            if (onHoverEnd) onHoverEnd(); 
+          }}
         >
           <ButtonImage src={logo} alt={`Movie ${index + 1} Logo (Korean)`} />
         </SlideButton>
