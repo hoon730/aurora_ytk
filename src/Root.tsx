@@ -4,7 +4,7 @@ import theme from "./theme";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import TopBtn from "./components/TopBtn";
-
+import { useEffect, useState } from "react";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -42,16 +42,31 @@ export const SectionContainer = styled.section`
   text-align: center;
 `;
 
-
 const App = () => {
+  const [isPre, setIsPre] = useState(false);
+  // const matchPre = useMatch("/pre-loading");
+  // const matchLogin = useMatch("/login");
+  useEffect(() => {
+    const isPrePath =
+      window.location.pathname.includes("pre-loading") ||
+      window.location.pathname.includes("login");
+    setIsPre(isPrePath);
+  }, []);
+  // const [isPre, setIsPre] = useState(matchPre || matchLogin ? true : false);
+  // useEffect(() => {
+  //   const newIsPre = matchPre || matchLogin ? true : false;
+  //   if (isPre !== newIsPre) {
+  //     setIsPre(newIsPre);
+  //   }
+  // }, [matchPre, matchLogin, isPre]);
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Header />
+        <Header isPre={isPre} />
         <Outlet />
         <Footer />
-        <TopBtn />
+        <TopBtn isPre={isPre} />
       </ThemeProvider>
     </>
   );
