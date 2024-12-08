@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Detail from "./pages/Detail";
 import PreLoading from "./pages/Pre-Loading";
 import WrongAddress from "./pages/WrongAddress";
+import ProtectedPage from "./components/ProtectedPage";
 
 const router = createBrowserRouter([
   {
@@ -15,15 +16,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/movies/:movieId",
-        element: <Home />,
+        element: (
+          <ProtectedPage>
+            <Home />
+          </ProtectedPage>
+        ),
       },
       {
         path: "tv",
-        element: <Tv />,
+        element: (
+          <ProtectedPage>
+            <Tv />
+          </ProtectedPage>
+        ),
       },
       {
         path: "login",
@@ -35,11 +40,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/detail/:movieId",
-        element: <Detail />,
+        element: (
+          <ProtectedPage>
+            <Detail />
+          </ProtectedPage>
+        ),
       },
       {
         path: "search",
-        element: <Search />,
+        element: (
+          <ProtectedPage>
+            <Search />
+          </ProtectedPage>
+        ),
       },
       {
         path: "*",

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useSetRecoilState } from "recoil";
+import { authenticate } from "../atom";
 
 const Container = styled.main`
   width: 100%;
@@ -88,8 +90,11 @@ const LoginInput = styled.input`
     outline: none;
     border-bottom: 3px solid ${(props) => props.theme.aqua.aqua1};
   }
-  &:focus + label {
+  &:focus + label,
+  &:not(:placeholder-shown) + label {
     opacity: 1;
+    font-size: 12px;
+    top: 23%;
   }
 `;
 
@@ -97,11 +102,11 @@ const Label = styled.label<{ $isEmpty: string }>`
   position: absolute;
   transform: translateY(-50%);
   padding-left: 20px;
-  font-size: ${({ $isEmpty }) => ($isEmpty === "" ? "16px" : "12px")};
+  font-size: 16px;
   color: ${(props) => props.theme.aqua.aqua1};
   pointer-events: none;
   transition: all 0.2s ease-in-out;
-  top: ${({ $isEmpty }) => ($isEmpty === "" ? "50%" : "23%")};
+  top: 50%;
 `;
 
 const Button = styled.button`
@@ -135,8 +140,12 @@ const CopyrightTitle = styled.span`
 `;
 
 const CopyrightText = styled.p`
-  font: bold 12px "pretendard";
+  font: 12px "pretendard";
   color: #6a6a6a;
+  span {
+    color: ${(props) => props.theme.aqua.aqua1};
+    cursor: pointer;
+  }
 `;
 
 const Login = () => {
@@ -144,14 +153,28 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [next, setNext] = useState(false);
 
+  const setAuthState = useSetRecoilState(authenticate);
   const navigation = useNavigate();
 
   const onEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setNext(true);
+
+    if (!next) {
+      // 첫 번째 단계: 이메일 입력
+      if (email) {
+        setNext(true);
+      }
+    } else {
+      // 두 번째 단계: 비밀번호 입력 및 로그인 처리
+      setAuthState({
+        isAuthenticated: true,
+        user: {
+          email,
+          password,
+        },
+      });
+      navigation("/");
     }
-    if (next) navigation("/");
   };
 
   return (
@@ -163,13 +186,16 @@ const Login = () => {
             <DarkLogo src="/img/darklogo.png" width="119" height="38" />
           </LogoBox>
           <GuideBox>
-            <GuideTitle>이메일을 입력하세요</GuideTitle>
+            <GuideTitle>
+              {next ? "비밀번호를 입력하세요" : "이메일을 입력하세요"}
+            </GuideTitle>
             <GuideText>
               MyAurora 계정으로 오로라+에 로그인하세요.
               <br />
-              이메일을 입력해주세요.
+              {next ? "비밀번호를 입력해주세요." : "이메일을 입력해주세요."}
             </GuideText>
           </GuideBox>
+
           <Form onSubmit={onEmailSubmit}>
             {next ? (
               <InputBox>
@@ -178,7 +204,7 @@ const Login = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder=" " // 비워 둬야 label이 작동합니다.
+                  placeholder=" "
                   required
                 />
                 <Label htmlFor="password" $isEmpty={password}>
@@ -192,7 +218,7 @@ const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder=" " // 비워 둬야 label이 작동합니다.
+                  placeholder=" "
                   required
                 />
                 <Label htmlFor="email" $isEmpty={email}>
@@ -204,12 +230,12 @@ const Login = () => {
           </Form>
           <CopyrightBox>
             <CopyrightTitle>
-              오로라+는 The Wait Aurora Family of Companies의 계열사입니다.
+              오로라+는 The Aurora Family of Companies의 계열사입니다.
             </CopyrightTitle>
             <CopyrightText>
-              MyAurora 계정으로 Aurora+, ESPN, Walt Aurora World, 기타 다른
-              서비스 등 The Walt Aurora Family of Companies의 다양한 서비스에
-              간편하게 로그인해 보세요.
+              MyAurora 계정으로 Aurora+, ESPN, Aurora World,
+              <span>기타 다른 서비스</span> 등 The Aurora Family of Companies의
+              다양한 서비스에 간편하게 로그인해 보세요.
             </CopyrightText>
           </CopyrightBox>
         </LonginBox>

@@ -6,6 +6,7 @@ const Wrapper = styled.span`
   height: 30px;
   background: #b5b5b5;
   border-radius: 5px;
+  font-size: 14px;
   font-weight: bold;
   color: #fff;
   display: flex;

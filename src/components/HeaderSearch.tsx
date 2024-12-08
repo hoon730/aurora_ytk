@@ -15,7 +15,7 @@ const Search = styled.form<{ $openSearch: boolean }>`
     height: 20px;
     fill: ${(props) => props.theme.white.lighter};
   }
-  @media screen and (max-width: 780px) {
+  @media screen and (max-width: 768px) {
     display: ${({ $openSearch }) => ($openSearch ? "flex" : "none")};
   }
 `;
