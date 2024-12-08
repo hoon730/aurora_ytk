@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { authenticate } from "../atom";
 
 const Wrapper = styled.div`
   position: relative;
@@ -60,14 +62,27 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
 
 const UserBox = ({ position }: { position: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const setAuthState = useSetRecoilState(authenticate);
   const navigation = useNavigate();
+
+  const logout = () => {
+    setAuthState({
+      isAuthenticated: false,
+      user: {
+        email: null,
+        password: null,
+      },
+    });
+    navigation("/pre-loading");
+  };
+
   return (
     <Wrapper>
       <UserArea $position={position} onClick={() => setIsOpen((prev) => !prev)}>
         <UserImg src="/img/profile.jpg" />
       </UserArea>
       <UserNav $position={position} $isOpen={isOpen}>
-        <Logout onClick={() => navigation("/login")}>로그아웃</Logout>
+        <Logout onClick={logout}>로그아웃</Logout>
       </UserNav>
       <Overlay $isOpen={isOpen} onClick={() => setIsOpen(false)} />
     </Wrapper>

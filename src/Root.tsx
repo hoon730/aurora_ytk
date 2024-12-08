@@ -5,7 +5,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import TopBtn from "./components/TopBtn";
 
-
 const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
@@ -41,7 +40,6 @@ export const SectionContainer = styled.section`
   padding: 5.6vw;
   text-align: center;
 `;
-
 
 const App = () => {
   return (

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useSetRecoilState } from "recoil";
+import { authenticate } from "../atom";
 
 const Container = styled.main`
   width: 100%;
@@ -151,14 +153,28 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [next, setNext] = useState(false);
 
+  const setAuthState = useSetRecoilState(authenticate);
   const navigation = useNavigate();
 
   const onEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setNext(true);
+
+    if (!next) {
+      // 첫 번째 단계: 이메일 입력
+      if (email) {
+        setNext(true);
+      }
+    } else {
+      // 두 번째 단계: 비밀번호 입력 및 로그인 처리
+      setAuthState({
+        isAuthenticated: true,
+        user: {
+          email,
+          password,
+        },
+      });
+      navigation("/");
     }
-    if (next) navigation("/");
   };
 
   return (
@@ -188,7 +204,7 @@ const Login = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder=" " // 비워 둬야 label이 작동해요!
+                  placeholder=" "
                   required
                 />
                 <Label htmlFor="password" $isEmpty={password}>
@@ -202,7 +218,7 @@ const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder=" " // 비워 둬야 label이 작동해요!
+                  placeholder=" "
                   required
                 />
                 <Label htmlFor="email" $isEmpty={email}>
@@ -217,10 +233,9 @@ const Login = () => {
               오로라+는 The Aurora Family of Companies의 계열사입니다.
             </CopyrightTitle>
             <CopyrightText>
-              MyAurora 계정으로 Aurora+, ESPN, Aurora World,{" "}
+              MyAurora 계정으로 Aurora+, ESPN, Aurora World,
               <span>기타 다른 서비스</span> 등 The Aurora Family of Companies의
               다양한 서비스에 간편하게 로그인해 보세요.
-              {/* 반가워요 다시만나요 내일 또 봐요~~ 찰칵찰칵 */}
             </CopyrightText>
           </CopyrightBox>
         </LonginBox>
