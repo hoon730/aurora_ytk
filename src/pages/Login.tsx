@@ -33,11 +33,20 @@ const Logo = styled.img`
 
 const LonginBox = styled.div`
   /* border: 1px solid red; */
-  width: 580px;
-  height: 593px;
   background: ${(props) => props.theme.white.lighter};
   border-radius: 20px;
-  padding: 60px 72px;
+  padding: 60px 60px;
+  margin: 0 auto;
+
+  @media screen and (max-width: 768px) {
+    padding: 60px 60px;
+    margin: 0 30px;
+  }
+
+  @media screen and (max-width: 450px) {
+    padding: 40px 30px 50px;
+    margin: 0 30px;
+  }
 `;
 
 const LogoBox = styled.div`
@@ -49,31 +58,49 @@ const DarkLogo = styled.img``;
 
 const GuideBox = styled.div`
   /* border: 1px solid red; */
+  width: 100%;
   display: flex;
   flex-direction: column;
 `;
 
 const GuideTitle = styled.span`
-  font: bold 30px "pretendard";
   /* border: 1px solid red; */
+  font: bold 30px "pretendard";
   margin-bottom: 30px;
+
+  @media screen and (max-width: 450px) {
+    font: bold 22px "pretendard";
+    margin-bottom: 20px;
+  }
 `;
 
 const GuideText = styled.p`
-  font: bold 16px "pretendard";
   /* border: 1px solid red; */
+  font: bold 16px "pretendard";
   margin-bottom: 30px;
+
+  @media screen and (max-width: 450px) {
+    font: bold 14px "pretendard";
+    margin-bottom: 20px;
+  }
 `;
 
-const Form = styled.form``;
+const Form = styled.form`
+  /* border: 1px solid red; */
+`;
 
 const InputBox = styled.div`
-  /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
   gap: 24px;
   margin-bottom: 25px;
   position: relative;
+
+  @media screen and (max-width: 450px) {
+    font: bold 12px "pretendard";
+    height: 40px;
+    margin-bottom: 15px;
+  }
 `;
 
 const LoginInput = styled.input`
@@ -96,6 +123,15 @@ const LoginInput = styled.input`
     font-size: 12px;
     top: 23%;
   }
+
+  @media screen and (max-width: 768px) {
+    height: 50px;
+  }
+
+  @media screen and (max-width: 450px) {
+    font: bold 12px "pretendard";
+    height: 45px;
+  }
 `;
 
 const Label = styled.label<{ $isEmpty: string }>`
@@ -107,6 +143,10 @@ const Label = styled.label<{ $isEmpty: string }>`
   pointer-events: none;
   transition: all 0.2s ease-in-out;
   top: 50%;
+
+  @media screen and (max-width: 450px) {
+    font: bold 14px "pretendard";
+  }
 `;
 
 const Button = styled.button`
@@ -123,6 +163,17 @@ const Button = styled.button`
   &:hover {
     background: ${(props) => props.theme.aqua.aqua4};
   }
+
+  @media screen and (max-width: 768px) {
+    height: 48px;
+    margin-bottom: 40px;
+  }
+
+  @media screen and (max-width: 450px) {
+    height: 40px;
+    font: bold 14px "pretendard";
+    margin-bottom: 30px;
+  }
 `;
 
 const CopyrightBox = styled.div`
@@ -130,13 +181,27 @@ const CopyrightBox = styled.div`
   display: flex;
   flex-direction: column;
   border-top: 1px solid #d4d4d4;
-  padding-top: 30px;
+  padding-top: 20px;
+
+  @media screen and (max-width: 600px) {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 450px) {
+    height: 40px;
+    font: bold 14px "pretendard";
+    margin-bottom: 40px;
+  }
 `;
 
 const CopyrightTitle = styled.span`
   font: bold 15px "pretendard";
   color: #6a6a6a;
   padding-bottom: 7px;
+
+  @media screen and (max-width: 450px) {
+    font: bold 13px "pretendard";
+  }
 `;
 
 const CopyrightText = styled.p`
