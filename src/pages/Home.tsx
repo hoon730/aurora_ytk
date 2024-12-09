@@ -25,167 +25,95 @@ const Container = styled.div`
 `;
 
 const Home = () => {
-  const slides: string[] = [
-    "./assets/images/popular/1.png",
-    "./assets/images/popular/2.png",
-    "./assets/images/popular/3.png",
-    "./assets/images/popular/4.png",
-    "./assets/images/popular/5.png",
-    "./assets/images/popular/6.png",
+  
+  const queries = [
+    {
+      query: useQuery<GetMoviesResult>({
+        queryKey: ["nowPlaying"],
+        queryFn: getMovies,
+      }),
+      category: "np",
+      categoryTitle: "오로라 최신작",
+    },
+    {
+      query: useQuery<GetMoviesResult>({
+        queryKey: ["todaysMovies"],
+        queryFn: getTodaysMovies,
+      }),
+      category: "tm",
+      categoryTitle: "오늘의 추천작",
+    },
+    {
+      query: useQuery<GetMoviesResult>({
+        queryKey: ["popular"],
+        queryFn: getPopular,
+      }),
+      category: "pd",
+      categoryTitle: "인기작",
+    },
+    {
+      query: useQuery<GetMoviesResult>({
+        queryKey: ["topRated"],
+        queryFn: getTopRated,
+      }),
+      category: "tr",
+      categoryTitle: "시청자들의 Pick",
+    },
+    {
+      query: useQuery<GetMoviesResult>({
+        queryKey: ["thriller"],
+        queryFn: getThrillerMovies,
+      }),
+      category: "td",
+      categoryTitle: "스릴러",
+    },
+    {
+      query: useQuery<GetMoviesResult>({
+        queryKey: ["comedy"],
+        queryFn: getComedyMovies,
+      }),
+      category: "cd",
+      categoryTitle: "코미디",
+    },
+    {
+      query: useQuery<GetMoviesResult>({
+        queryKey: ["fantasy"],
+        queryFn: getFantasyMovies,
+      }),
+      category: "fd",
+      categoryTitle: "판타지",
+    },
   ];
-
-  const { data: nowPlayingData, isLoading: nowPlayingLoaing } =
-    useQuery<GetMoviesResult>({
-      queryKey: ["nowPlaying"],
-      queryFn: getMovies,
-    });
-
-  const { data: todaysMoviesData, isLoading: todaysMoviesLoading } =
-    useQuery<GetMoviesResult>({
-      queryKey: ["todaysMovies"],
-      queryFn: getTodaysMovies,
-    });
-
-  const { data: popularData, isLoading: popularLoading } =
-    useQuery<GetMoviesResult>({
-      queryKey: ["popular"],
-      queryFn: getPopular,
-    });
-
-  const { data: topRatedData, isLoading: topRatedLoading } =
-    useQuery<GetMoviesResult>({
-      queryKey: ["topRated"],
-      queryFn: getTopRated,
-    });
-
-  const { data: thrillerData, isLoading: thrillerLoading } =
-    useQuery<GetMoviesResult>({
-      queryKey: ["thriller"],
-      queryFn: getThrillerMovies,
-    });
-
-  const { data: comedyData, isLoading: comedyLoading } =
-    useQuery<GetMoviesResult>({
-      queryKey: ["comedy"],
-      queryFn: getComedyMovies,
-    });
-
-  const { data: fantasyData, isLoading: fantasyLoading } =
-    useQuery<GetMoviesResult>({
-      queryKey: ["fantasy"],
-      queryFn: getFantasyMovies,
-    });
 
   const { data: genres, isLoading: genresLoading } = useQuery({
     queryKey: ["genres"],
     queryFn: getGenres,
   });
 
+  const isAnyLoading =
+    queries.some((item) => item.query.isLoading) || genresLoading;
+
+  if (isAnyLoading) {
+    return (
+      <Container>
+        <Loading />
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <MainBanner />
-      {nowPlayingLoaing ? (
-        <Loading />
-      ) : (
-        <>
-          {nowPlayingData && (
-            <Slider
-              category={"np"}
-              data={nowPlayingData}
-              categoryTitle="오로라 최신작"
-              genres={genres || []}
-            />
-          )}
-        </>
-      )}
-      {todaysMoviesLoading ? (
-        <Loading />
-      ) : (
-        <>
-          {todaysMoviesData && (
-            <Slider
-              category={"tm"}
-              data={todaysMoviesData}
-              categoryTitle="오늘의 추천작"
-              genres={genres || []}
-            />
-          )}
-        </>
-      )}
-
-      {topRatedLoading ? (
-        <Loading />
-      ) : (
-        <>
-          {topRatedData && (
-            <Slider
-              category={"tr"}
-              data={topRatedData}
-              categoryTitle="시청자들의 Pick"
-              genres={genres || []}
-            />
-          )}
-        </>
-      )}
-
-      {popularLoading ? (
-        <Loading />
-      ) : (
-        <>
-          {popularData && (
-            <Slider
-              category={"pd"}
-              data={popularData}
-              categoryTitle="인기작"
-              genres={genres || []}
-            />
-          )}
-        </>
-      )}
-
-      {thrillerLoading ? (
-        <Loading />
-      ) : (
-        <>
-          {thrillerData && (
-            <Slider
-              category={"td"}
-              data={thrillerData}
-              categoryTitle="스릴러"
-              genres={genres || []}
-            />
-          )}
-        </>
-      )}
-
-      {comedyLoading ? (
-        <Loading />
-      ) : (
-        <>
-          {comedyData && (
-            <Slider
-              category={"cd"}
-              data={comedyData}
-              categoryTitle="코미디"
-              genres={genres || []}
-            />
-          )}
-        </>
-      )}
-
-      {fantasyLoading ? (
-        <Loading />
-      ) : (
-        <>
-          {fantasyData && (
-            <Slider
-              category={"fd"}
-              data={fantasyData}
-              categoryTitle="판타지"
-              genres={genres || []}
-            />
-          )}
-        </>
+      {queries.map(({ query, category, categoryTitle }) =>
+        query.data ? (
+          <Slider
+            key={category}
+            category={category}
+            data={query.data}
+            categoryTitle={categoryTitle}
+            genres={genres || []}
+          />
+        ) : null
       )}
     </Container>
   );

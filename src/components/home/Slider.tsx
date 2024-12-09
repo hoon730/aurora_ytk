@@ -84,6 +84,12 @@ const SliderContainer = styled.div`
       height: 270px;
     }
   }
+
+  @media (max-width: 480px) {
+    &.tr {
+      height: 230px;
+    }
+  }
 `;
 
 const PrevBtn = styled.div`

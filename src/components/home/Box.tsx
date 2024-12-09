@@ -41,6 +41,10 @@ const Container = styled(motion.div)<{
   @media (max-width: 768px) {
     height: ${(props) => (props.$tr ? "270px" : "144px")};
   }
+
+  @media (max-width: 480px) {
+    height: ${(props) => (props.$tr ? "230px" : "144px")};
+  }
 `;
 
 const MovieTitle = styled.div`

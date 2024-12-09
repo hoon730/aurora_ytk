@@ -9,25 +9,36 @@ const BannerContainer = styled.div`
   overflow: hidden;
   width: 100%;
   height: fit-content;
+  padding: 0 50px;
+  @media (max-width: 768px) {
+    padding: 0 42px;
+  }
 `;
 
 const SlideWrapper = styled.div<{ $currentSlide: number }>`
   display: flex;
-  margin-left: 4%;
+  /* margin-left: 4%; */
+  gap: 25px;
   height: 500px;
   min-height: 500px;
   transition: transform 0.5s ease;
-  transform: ${(props) => `translateX(${props.$currentSlide * -93}%)`};
+  transform: ${(props) =>
+    `translateX(calc(${props.$currentSlide * -100}% - ${
+      props.$currentSlide * 25
+    }px))`};
   @media (max-width: 768px) {
     height: 80vw;
     margin-left: 0;
-    transform: ${(props) => `translateX(${props.$currentSlide * -98}%)`};
+    transform: ${(props) =>
+      `translateX(calc(${props.$currentSlide * -100}% - ${
+        props.$currentSlide * 25
+      }px))`};
   }
 `;
 
 const Slide = styled.div<{ $image: string; $isActive: boolean }>`
-  flex: 0 0 90%;
-  margin-left: 3%;
+  flex: 0 0 100%;
+  width: 100%;
   height: 100%;
   background-size: cover;
   background-position: 50% 10%;
@@ -37,8 +48,6 @@ const Slide = styled.div<{ $image: string; $isActive: boolean }>`
   transition: border 0.3s ease;
   cursor: pointer;
   @media (max-width: 768px) {
-    flex: 0 0 96%;
-    margin-left: 2%;
     border-radius: 5px;
     border: ${(props) => (props.$isActive ? "2px solid #f5f5f5" : "none")};
   }
@@ -71,6 +80,7 @@ const MainBanner = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startX = useRef<number | null>(null);
   const isDragging = useRef<boolean>(false);
+  const SlideWrapperGap = 25;
 
   const startInterval = () => {
     intervalRef.current = setInterval(() => {
