@@ -4,22 +4,21 @@ import { getMovieLogos } from "../../api";
 import { movieIds } from "./MainBanner";
 
 const ButtonContainer = styled.div`
+  padding: 50px 0;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px auto;
+  gap: 10px;
   @media (max-width: 768px) {
+    padding: 42px 0;
     display: grid;
-    width: 96%;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
   }
 `;
 
 const SlideButton = styled.button<{ $isActive: boolean }>`
-  width: 15%;
   height: 150px;
-  margin: 0 5px;
   border: 3px solid ${(props) => (props.$isActive ? "#ccc" : "#041a27")};
   border-radius: 5px;
   background-color: ${(props) => (props.$isActive ? "#111" : "#052131")};
@@ -31,6 +30,7 @@ const SlideButton = styled.button<{ $isActive: boolean }>`
   }
   @media (max-width: 768px) {
     width: 100%;
+    height: 144px;
   }
 `;
 
