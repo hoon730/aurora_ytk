@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { certificationInfo, makeImagePath } from "../utils";
 import { useNavigate } from "react-router-dom";
 import { useMovieReleaseInfo } from "../hook/commonData";
+import Loading from "./Loading";
 
 const Container = styled.div`
   width: 100%;
@@ -144,27 +145,31 @@ const SearchItem = ({ movieId, image }: SearchItemProps) => {
 
   return (
     <Container>
-      <ImageArea
-        logo={searchInfo.logo}
-        onClick={() => navigate(`/detail/${movieId}`)}
-      >
-        <BackgroundImage
-          src={makeImagePath(image, "w500")}
-          alt={searchInfo.title + " image"}
-        />
-        <LogoArea>
-          {imageLoading ? (
-            "Loading..."
-          ) : searchInfo.logo !== undefined ? (
-            <LogoImage
-              src={makeImagePath(searchInfo.logo, "w300")}
-              alt={searchInfo.title + " logo"}
-            />
-          ) : (
-            <LogoTitle>{searchInfo.title}</LogoTitle>
-          )}
-        </LogoArea>
-      </ImageArea>
+      {!image ? (
+        <Loading />
+      ) : (
+        <ImageArea
+          logo={searchInfo.logo}
+          onClick={() => navigate(`/detail/${movieId}`)}
+        >
+          <BackgroundImage
+            src={makeImagePath(image, "w500")}
+            alt={searchInfo.title + " image"}
+          />
+          <LogoArea>
+            {imageLoading ? (
+              "Loading..."
+            ) : searchInfo.logo !== undefined ? (
+              <LogoImage
+                src={makeImagePath(searchInfo.logo, "w300")}
+                alt={searchInfo.title + " logo"}
+              />
+            ) : (
+              <LogoTitle>{searchInfo.title}</LogoTitle>
+            )}
+          </LogoArea>
+        </ImageArea>
+      )}
       <InfoArea>
         <Title onClick={() => navigate(`/detail/${movieId}`)}>
           {searchInfo.title}
