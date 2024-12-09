@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { mobileMenuOpen } from "../atom";
+import { useRecoilValue } from "recoil";
+import { useMatch } from "react-router-dom";
 
-const BtnContainer = styled.div<{ $isNavVisible: boolean }>`
+const BtnContainer = styled.div<{
+  $isNavVisible: boolean;
+  $openMenu: boolean;
+  $isLogin: boolean;
+}>`
+  display: ${({ $openMenu, $isLogin }) =>
+    $openMenu || $isLogin ? "none" : "block"};
   position: fixed;
   right: 30px;
   bottom: 30px;
@@ -33,6 +42,13 @@ const BtnImg = styled.img`
 `;
 
 const TopBtn = ({ isPre }: { isPre: boolean }) => {
+  const matchLogin = useMatch("/login");
+  const [isLogin, setIsLogin] = useState(matchLogin ? true : false);
+  useEffect(() => {
+    setIsLogin(matchLogin ? true : false);
+  }, [matchLogin, isLogin]);
+
+  const openMenu = useRecoilValue(mobileMenuOpen);
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -41,7 +57,12 @@ const TopBtn = ({ isPre }: { isPre: boolean }) => {
   };
 
   return (
-    <BtnContainer $isNavVisible={!isPre} onClick={scrollToTop}>
+    <BtnContainer
+      $isNavVisible={!isPre}
+      onClick={scrollToTop}
+      $openMenu={openMenu}
+      $isLogin={isLogin}
+    >
       <BtnImg src="./assets/icons/benefits/3.svg" alt="top button" />
     </BtnContainer>
   );
