@@ -15,3 +15,8 @@ export const authenticate = atom({
     } as User,
   },
 });
+
+export const mobileMenuOpen = atom({
+  key: "mobileMenuOpen",
+  default: false,
+});

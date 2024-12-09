@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { GetMoviesResult, searchContents, getAllGeneres, Genres } from "../api";
 import SearchItem from "../components/SearchItem";
 import { formatDate } from "../utils";
+import Loading from "../components/Loading";
 
 const Container = styled.main`
   width: 100%;
@@ -236,7 +237,7 @@ const Search = () => {
     queryFn: getAllGeneres,
   });
 
-  const { data: movieData } = useQuery<GetMoviesResult>({
+  const { data: movieData, isLoading } = useQuery<GetMoviesResult>({
     queryKey: ["searchContents", keyword],
     queryFn: () => searchContents(keyword),
   });
@@ -244,13 +245,7 @@ const Search = () => {
   const searchResultData =
     movieData !== undefined
       ? movieData.results.filter(
-          (item) =>
-            (item.original_language === "en" ||
-              item.original_language === "ko") &&
-            item.release_date >= "2000-01-01" &&
-            item.release_date <= formatDate(new Date()) &&
-            (item.backdrop_path || item.poster_path) &&
-            item.vote_count > 0
+          (item) => item.backdrop_path || item.poster_path
         )
       : [];
 
@@ -339,7 +334,9 @@ const Search = () => {
   return (
     <Container>
       <Inner>
-        {searchResultData.length === 0 ? (
+        {isLoading ? (
+          <Loading />
+        ) : searchResultData.length === 0 && !isLoading ? (
           <NoResult>"{keyword}"의 검색결과가 없습니다.</NoResult>
         ) : (
           <>

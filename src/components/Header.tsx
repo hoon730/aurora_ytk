@@ -75,7 +75,6 @@ const Header = ({ isPre }: { isPre: boolean }) => {
   const matchHome = useMatch("/");
   const [isHome, setIsHome] = useState(matchHome ? true : false);
   const [openSearch, setOpenSearch] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
   const navigation = useNavigate();
@@ -113,10 +112,6 @@ const Header = ({ isPre }: { isPre: boolean }) => {
     setOpenSearch((prev) => !prev);
   };
 
-  const handleMenu = () => {
-    setOpenMenu((prev) => !prev);
-  };
-
   return (
     <>
       <Nav
@@ -128,18 +123,14 @@ const Header = ({ isPre }: { isPre: boolean }) => {
         <BackButton $isHome={isHome} onClick={goBack}></BackButton>
         <Logo $openSearch={openSearch} src="/img/logo.png" onClick={goToMain} />
         <Right variants={navVariants} animate={navAnimation}>
-          <Menu openMenu={openMenu} />
+          <Menu />
           <SearchAndProfile>
             <HeaderSearch openSearch={openSearch} />
             <UserBox position="top" />
           </SearchAndProfile>
         </Right>
       </Nav>
-      <MobileHeader
-        isPre={isPre}
-        handleSearch={handleSearch}
-        handleMenu={handleMenu}
-      />
+      <MobileHeader isPre={isPre} handleSearch={handleSearch} />
     </>
   );
 };
