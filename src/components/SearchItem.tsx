@@ -145,7 +145,7 @@ const SearchItem = ({ movieId, image }: SearchItemProps) => {
 
   return (
     <Container>
-      {!image ? (
+      {imageLoading ? (
         <Loading />
       ) : (
         <ImageArea
@@ -181,7 +181,11 @@ const SearchItem = ({ movieId, image }: SearchItemProps) => {
             {certificationInfo(searchInfo.certification).age}
           </Certification>
           <TextArea>
-            <Text>{searchInfo.release_date?.slice(0, 4)}</Text>
+            <Text>
+              {searchInfo.release_date?.length === 0
+                ? "정보 없음"
+                : searchInfo.release_date?.slice(0, 4)}
+            </Text>
             <Text>·</Text>
             <Text style={{ textOverflow: "ellipsis" }}>
               {searchInfo.genre?.length === 0

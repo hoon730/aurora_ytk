@@ -15,6 +15,7 @@ const UserArea = styled.div<{ $position: string }>`
   position: relative;
   z-index: 11;
   overflow: hidden;
+  cursor: pointer;
   @media screen and (max-width: 768px) {
     display: ${({ $position }) => ($position === "top" ? "none" : "block")};
   }

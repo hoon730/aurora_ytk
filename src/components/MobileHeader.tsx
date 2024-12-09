@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useSetRecoilState } from "recoil";
+import { mobileMenuOpen } from "../atom";
 import { AiFillHome } from "react-icons/ai";
 import { IoSearch, IoMenu } from "react-icons/io5";
 import UserBox from "./UserBox";
@@ -46,12 +48,11 @@ const Icons = styled.ul`
 const MobileHeader = ({
   isPre,
   handleSearch,
-  handleMenu,
 }: {
   isPre: boolean;
   handleSearch: () => void;
-  handleMenu: () => void;
 }) => {
+  const setOpenMenu = useSetRecoilState(mobileMenuOpen);
   const navigation = useNavigate();
   return (
     <Wrapper $isPre={isPre}>
@@ -59,7 +60,7 @@ const MobileHeader = ({
         <li onClick={() => navigation("/")}>
           <AiFillHome />
         </li>
-        <li onClick={handleMenu}>
+        <li onClick={() => setOpenMenu((prev) => !prev)}>
           <IoMenu />
         </li>
         <li onClick={handleSearch}>

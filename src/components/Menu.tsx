@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { mobileMenuOpen } from "../atom";
 
 const Items = styled.ul<{ $openMenu: boolean }>`
   display: flex;
@@ -11,17 +13,20 @@ const Items = styled.ul<{ $openMenu: boolean }>`
   @media screen and (max-width: 768px) {
     display: ${({ $openMenu }) => ($openMenu ? "flex" : "none")};
     width: 100%;
-    height: 60px;
+    height: fit-content;
     position: fixed;
-    top: 60px;
+    flex-direction: column;
+    bottom: 60px;
     left: 0;
     padding: 0 20px;
+    align-items: flex-start;
     justify-content: space-between;
-    background: ${({ theme }) => theme.aqua.aqua2};
+    background: rgba(0, 0, 0, 0.7);
     z-index: 10;
-  }
-  @media screen and (max-width: 450px) {
-    gap: 20px;
+    gap: 0;
+    & > li:nth-child(1) {
+      display: none;
+    }
   }
 `;
 
@@ -35,16 +40,24 @@ const Item = styled.li`
   &:hover {
     opacity: 0.7;
   }
+  @media screen and (max-width: 768px) {
+    padding: 10px 0;
+    width: 100%;
+    &:hover {
+      opacity: 1;
+    }
+  }
 `;
 
-const Menu = ({ openMenu }: { openMenu: boolean }) => {
+const Menu = () => {
+  const openMenu = useRecoilValue(mobileMenuOpen);
   return (
     <Items $openMenu={openMenu}>
       <Item>
         <Link to={"/"}>홈</Link>
       </Item>
       <Item>
-        <Link to={"/tv"}>영화</Link>
+        <Link to={"/"}>영화</Link>
       </Item>
       <Item>
         <Link to={"/"}>시리즈</Link>

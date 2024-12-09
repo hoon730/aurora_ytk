@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Root from "./Root";
 import Home from "./pages/Home";
-import Tv from "./pages/Tv";
 import Search from "./pages/Search";
 import Login from "./pages/Login";
 import Detail from "./pages/Detail";
@@ -19,14 +18,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedPage>
             <Home />
-          </ProtectedPage>
-        ),
-      },
-      {
-        path: "tv",
-        element: (
-          <ProtectedPage>
-            <Tv />
           </ProtectedPage>
         ),
       },

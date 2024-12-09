@@ -55,6 +55,9 @@ const FooterNav = styled.div`
   flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
   gap: 15px;
   font-weight: 500;
+  & > span {
+    cursor: pointer;
+  }
 
   @media (max-width: 768px) {
     font-size: 12px; /* 글자 크기 축소 */
@@ -76,6 +79,7 @@ const Right = styled.div`
 const SocialMedia = styled.img`
   width: 30px;
   height: 30px;
+  cursor: pointer;
 
   &:last-child {
     width: 23px;
