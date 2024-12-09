@@ -23,6 +23,9 @@ const Inner = styled.div`
   padding: 100px 0;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 768px) {
+    padding: 50px 0;
+  }
 `;
 
 const Header = styled.div`
