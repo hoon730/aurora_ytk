@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import { GetMoviesResult, searchContents, getAllGeneres, Genres } from "../api";
 import SearchItem from "../components/SearchItem";
-import { formatDate } from "../utils";
 import Loading from "../components/Loading";
 
 const Container = styled.main`

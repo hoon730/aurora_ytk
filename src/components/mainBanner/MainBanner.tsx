@@ -80,7 +80,6 @@ const MainBanner = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startX = useRef<number | null>(null);
   const isDragging = useRef<boolean>(false);
-  const SlideWrapperGap = 25;
 
   const startInterval = () => {
     intervalRef.current = setInterval(() => {

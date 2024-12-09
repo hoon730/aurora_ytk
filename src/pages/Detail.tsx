@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { PathMatch, useMatch, useNavigate } from "react-router-dom";

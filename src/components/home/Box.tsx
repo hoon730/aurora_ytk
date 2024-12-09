@@ -217,14 +217,6 @@ const bgVariants = {
     transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
-const bgClickVariants = {
-  click: {
-    display: "block",
-    opacity: 1,
-    zIndex: 10,
-    transition: { delay: 0.3, duration: 0.3, type: "tween" },
-  },
-};
 
 const Box = ({
   idx,
