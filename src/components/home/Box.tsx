@@ -77,7 +77,7 @@ const MovieTitle = styled.div`
 `;
 
 const MovieLogo = styled.img`
-  width: 100%;
+  width: 90%;
   height: 40px;
   object-fit: contain;
 `;
