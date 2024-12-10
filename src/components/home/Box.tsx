@@ -160,6 +160,7 @@ const Genres = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  color: #9a9a9a;
   margin-bottom: 10px;
 `;
 
